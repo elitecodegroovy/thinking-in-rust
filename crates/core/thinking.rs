@@ -5,6 +5,8 @@ use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
 use regex::internal::Input;
+use indicatif::{ProgressBar, ProgressStyle};
+use std::cmp::min;
 
 //pub fn do_rc() {
 //    let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
@@ -1482,9 +1484,28 @@ fn do_enum() {
     println!("violets are #{:06x}", Color::Blue as i32);
 }
 
+fn download_pb() {
+    let mut downloaded = 0;
+    let total_size = 2312312;
 
+    let pb = ProgressBar::new(total_size);
+    pb.set_style(ProgressStyle::default_bar()
+        .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {bytes}/{total_bytes} ({eta})")
+        .progress_chars("#>-"));
+
+    while downloaded < total_size {
+        let new = min(downloaded + 22327, total_size);
+        downloaded = new;
+        pb.set_position(new);
+        thread::sleep(Duration::from_millis(12));
+    }
+
+    pb.finish_with_message("下载完成！");
+}
 
 pub fn main_thinking() {
+    // init log
+
     do_basic_data_type();
     do_struct();
 
@@ -1519,5 +1540,5 @@ pub fn main_thinking() {
     do_fn_pointer();
 //    do_simple_web_listener();
     do_enum();
-
+    download_pb();
 }
