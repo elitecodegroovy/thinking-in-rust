@@ -126,8 +126,8 @@ fn thinking_in_rust() {
     home::do_layout();
     home::decorator::do_decorate();
     do_home();
-    thinking::main_thinking();
     do_linked_list();
+    thinking::main_thinking();
 }
 
 fn try_main(args: Args) -> Result<()> {
