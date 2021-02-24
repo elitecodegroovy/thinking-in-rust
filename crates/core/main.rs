@@ -22,7 +22,72 @@ mod subject;
 mod thinking;
 mod home; // Import home module
 mod utils;
+use crate::List::{Nil, Cons};
+enum List {
+    // Cons: Tuple struct that wraps an element and a pointer to the next node
+    Cons(u32, Box<List>),
+    // Nil: A node that signifies the end of the linked list
+    Nil,
+}
 
+// Methods can be attached to an enum
+impl List {
+    // Create an empty list
+    fn new() -> List {
+        // `Nil` has type `List`
+        Nil
+    }
+
+    // Consume a list, and return the same list with a new element at its front
+    fn prepend(self, elem: u32) -> List {
+        // `Cons` also has type List
+        Cons(elem, Box::new(self))
+    }
+
+    // Return the length of the list
+    fn len(&self) -> u32 {
+        // `self` has to be matched, because the behavior of this method
+        // depends on the variant of `self`
+        // `self` has type `&List`, and `*self` has type `List`, matching on a
+        // concrete type `T` is preferred over a match on a reference `&T`
+        match self {
+            // Can't take ownership of the tail, because `self` is borrowed;
+            // instead take a reference to the tail
+            Cons(_, ref tail) => 1 + tail.len(),
+            // Base Case: An empty list has zero length
+            Nil => 0
+        }
+    }
+
+    // Return representation of the list as a (heap allocated) string
+    fn stringify(&self) -> String {
+        match self {
+            Cons(head, ref tail) => {
+                // `format!` is similar to `print!`, but returns a heap
+                // allocated string instead of printing to the console
+                format!("{}, {}", head, tail.stringify())
+            },
+            Nil => {
+                format!("Nil")
+            },
+        }
+    }
+}
+
+
+fn do_linked_list() {
+    // Create an empty linked list
+    let mut list = List::new();
+
+    // Prepend some elements
+    list = list.prepend(1);
+    list = list.prepend(2);
+    list = list.prepend(3);
+
+    // Show the final state of the list
+    println!("linked list 长度= {}", list.len());
+    println!("{}", list.stringify());
+}
 // Since Rust no longer uses jemalloc by default, ripgrep will, by default,
 // use the system allocator. On Linux, this would normally be glibc's
 // allocator, which is pretty good. In particular, ripgrep does not have a
@@ -50,14 +115,19 @@ type Result<T> = ::std::result::Result<T, Box<dyn error::Error>>;
 
 fn main() {
     // TODO ... remove the useless code
-    thinking::main_thinking();
-    home::do_layout();
-    home::decorator::do_decorate();
-    do_home();
+    thinking_in_rust();
     if let Err(err) = Args::parse().and_then(try_main) {
         eprintln!("{}", err);
         process::exit(2);
     }
+}
+
+fn thinking_in_rust() {
+    home::do_layout();
+    home::decorator::do_decorate();
+    do_home();
+    thinking::main_thinking();
+    do_linked_list();
 }
 
 fn try_main(args: Args) -> Result<()> {
@@ -329,11 +399,11 @@ fn pcre2_version(args: &Args) -> Result<bool> {
     }
 
     #[cfg(not(feature = "pcre2"))]
-    fn imp(args: &Args) -> Result<bool> {
+    fn imp2(args: &Args) -> Result<bool> {
         let mut stdout = args.stdout();
         writeln!(stdout, "PCRE2 is not available in this build of ripgrep.")?;
         Ok(false)
     }
 
-    imp(args)
+    imp2(args)
 }
