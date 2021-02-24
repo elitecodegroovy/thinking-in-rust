@@ -114,9 +114,10 @@ static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 type Result<T> = ::std::result::Result<T, Box<dyn error::Error>>;
 
 fn main() {
-    // TODO ... remove the useless code
-    thinking_in_rust();
+
     if let Err(err) = Args::parse().and_then(try_main) {
+        // TODO ... remove the useless code
+        thinking_in_rust();
         eprintln!("{}", err);
         process::exit(2);
     }
