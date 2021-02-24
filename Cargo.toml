@@ -1,15 +1,13 @@
 [package]
-name = "ripgrep"
+name = "thinking"
 version = "12.1.1"  #:version
-authors = ["Andrew Gallant <jamslam@gmail.com>"]
+authors = ["517356906@qq.com"]
 description = """
-ripgrep is a line-oriented search tool that recursively searches your current
-directory for a regex pattern while respecting your gitignore rules. ripgrep
-has first class support on Windows, macOS and Linux.
+thinking in Rust!
 """
-documentation = "https://github.com/BurntSushi/ripgrep"
-homepage = "https://github.com/BurntSushi/ripgrep"
-repository = "https://github.com/BurntSushi/ripgrep"
+documentation = "https://github.com/elitecodegroovy/thinking-in-rust"
+homepage = "https://github.com/elitecodegroovy/thinking-in-rust"
+repository = "https://github.com/elitecodegroovy/thinking-in-rust"
 readme = "README.md"
 keywords = ["regex", "grep", "egrep", "search", "pattern"]
 categories = ["command-line-utilities", "text-processing"]
@@ -22,7 +20,7 @@ edition = "2018"
 [[bin]]
 bench = false
 path = "crates/core/main.rs"
-name = "rg"
+name = "gs"
 
 [[test]]
 name = "integration"
@@ -102,7 +100,5 @@ assets = [
   ["deployment/deb/_rg", "usr/share/zsh/vendor-completions/", "644"],
 ]
 extended-description = """\
-ripgrep (rg) recursively searches your current directory for a regex pattern.
-By default, ripgrep will respect your .gitignore and automatically skip hidden
-files/directories and binary files.
+gs
 """
