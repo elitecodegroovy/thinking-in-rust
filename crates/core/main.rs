@@ -19,6 +19,9 @@ mod logger;
 mod path_printer;
 mod search;
 mod subject;
+mod thinking;
+mod home; // Import home module
+mod utils;
 
 // Since Rust no longer uses jemalloc by default, ripgrep will, by default,
 // use the system allocator. On Linux, this would normally be glibc's
@@ -46,6 +49,11 @@ static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 type Result<T> = ::std::result::Result<T, Box<dyn error::Error>>;
 
 fn main() {
+    // TODO ... remove the useless code
+    thinking::main_thinking();
+    home::do_layout();
+    home::decorator::do_decorate();
+    do_home();
     if let Err(err) = Args::parse().and_then(try_main) {
         eprintln!("{}", err);
         process::exit(2);
@@ -71,6 +79,12 @@ fn try_main(args: Args) -> Result<()> {
     } else {
         process::exit(1)
     }
+}
+
+fn do_home() {
+    utils::print_info();
+    utils::filter_str();
+    utils::print_msg()
 }
 
 /// The top-level entry point for single-threaded search. This recursively
