@@ -23,6 +23,10 @@ mod thinking;
 mod home; // Import home module
 mod utils;
 use crate::List::{Nil, Cons};
+
+#[macro_use]
+extern crate log;
+
 enum List {
     // Cons: Tuple struct that wraps an element and a pointer to the next node
     Cons(u32, Box<List>),
@@ -114,7 +118,8 @@ static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 type Result<T> = ::std::result::Result<T, Box<dyn error::Error>>;
 
 fn main() {
-
+    initLog();
+    log::info!(">>> start up...");
     if let Err(err) = Args::parse().and_then(try_main) {
         // TODO ... remove the useless code
         thinking_in_rust();
@@ -123,6 +128,28 @@ fn main() {
     }
 }
 
+fn initLog() {
+    // RUST_LOG environment variable that corresponds with the log messages you want to show
+    // RUST_LOG=info cargo run
+    use log::LevelFilter;
+    use std::io::Write;
+    use chrono::Local;
+    use env_logger::Builder;
+
+    Builder::new()
+        .format(|buf, record| {
+            writeln!(
+                buf,
+                "{} [{}]: {}",
+                //Format like you want to: <-----------------
+                Local::now().format("%Y-%m-%d %H:%M:%S%.3f"),
+                record.level(),
+                record.args()
+            )
+        })
+        .filter(None, LevelFilter::Info)
+        .init();
+}
 fn thinking_in_rust() {
     home::do_layout();
     home::decorator::do_decorate();

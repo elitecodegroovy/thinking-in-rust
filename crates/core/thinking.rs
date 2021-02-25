@@ -1501,6 +1501,7 @@ fn download_pb() {
     }
 
     pb.finish_with_message("下载完成！");
+    log::info!("下载完成");
 }
 
 pub fn main_thinking() {
