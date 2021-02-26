@@ -1,6 +1,6 @@
 [package]
 name = "thinking"
-version = "12.1.1"  #:version
+version = "1.1.1"  #:version
 authors = ["517356906@qq.com"]
 description = """
 thinking in Rust!
