@@ -21,7 +21,7 @@ fn main() {
             eprintln!(
                 "OUT_DIR environment variable not defined. \
                  Please file a bug: \
-                 https://github.com/BurntSushi/ripgrep/issues/new"
+                 https://github.com/elitecodegroovy/thinking-in-rust"
             );
             process::exit(1);
         }
