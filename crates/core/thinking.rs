@@ -1725,8 +1725,6 @@ fn do_time() {
 }
 
 pub fn main_thinking() {
-    // init log
-
     do_basic_data_type();
     do_struct();
 

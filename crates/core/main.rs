@@ -426,11 +426,11 @@ fn pcre2_version(args: &Args) -> Result<bool> {
     }
 
     #[cfg(not(feature = "pcre2"))]
-    fn imp2(args: &Args) -> Result<bool> {
+    fn imp(args: &Args) -> Result<bool> {
         let mut stdout = args.stdout();
         writeln!(stdout, "PCRE2 is not available in this build of ripgrep.")?;
         Ok(false)
     }
 
-    imp2(args)
+    imp(args)
 }
