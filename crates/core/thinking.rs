@@ -680,9 +680,120 @@ fn do_impl_trait2() {
     };
 
     println!("人员 01: {}", person_1.full_name());
+
+    do_impl_trait21();
     do_impl_trait3()
 }
 
+fn do_impl_trait21() {
+    struct Sheep { naked: bool, name: &'static str }
+    struct Cat { name: &'static str, color: &'static str }
+
+    trait Animal {
+        // Static method signature; `Self` refers to the implementor type.
+        fn new(name: &'static str) -> Self;
+
+        // Instance method signatures; these will return a string.
+        fn name(&self) -> &'static str;
+        fn noise(&self) -> &'static str;
+
+        // Traits can provide default method definitions.
+        fn talk(&self) {
+            println!("{} says {}", self.name(), self.noise());
+        }
+    }
+
+    impl Sheep {
+        fn is_naked(&self) -> bool {
+            self.naked
+        }
+
+        fn shear(&mut self) {
+            if self.is_naked() {
+                // Implementor methods can use the implementor's trait methods.
+                println!("{} is already naked...", self.name());
+            } else {
+                println!("{} gets a haircut!", self.name);
+
+                self.naked = true;
+            }
+        }
+    }
+
+    impl Cat {
+        fn get_color(&self) -> &'static str {
+            self.color
+        }
+
+        fn go_walk(&self) {
+            println!("{} go walk!", self.name)
+        }
+    }
+
+    // Implement the `Animal` trait for `Sheep`.
+    impl Animal for Sheep {
+        // `Self` is the implementor type: `Sheep`.
+        fn new(name: &'static str) -> Sheep {
+            Sheep { name: name, naked: false }
+        }
+
+        fn name(&self) -> &'static str {
+            self.name
+        }
+
+        fn noise(&self) -> &'static str {
+            if self.is_naked() {
+                "baaaaah?"
+            } else {
+                "baaaaah!"
+            }
+        }
+
+        // Default trait methods can be overridden.
+        fn talk(&self) {
+            // For example, we can add some quiet contemplation.
+            println!("{} pauses briefly... {}", self.name, self.noise());
+        }
+    }
+
+    impl Animal for Cat {
+        fn new(name: &'static str) -> Cat {
+            Cat{name, color: "white"}
+        }
+
+        fn name(&self) -> &'static str {
+            self.name
+        }
+
+        fn noise(&self) -> &'static str {
+            match self.color == "white" {
+                true => "it worked!",
+                _ => "other color"
+            }
+            // if let "white" = self.color {
+            //     "it worked!"
+            // }
+            // "other color"
+        }
+
+        fn talk(&self) {
+            println!("{} pauses briefly... {}", self.name, self.noise());
+        }
+    }
+    // Type annotation is necessary in this case.
+    let mut dolly: Sheep = Animal::new("Dolly");
+    // TODO ^ Try removing the type annotations.
+
+    dolly.talk();
+    dolly.shear();
+    dolly.talk();
+
+    let mut cat: Cat = Animal::new("Kity");
+
+    cat.talk();
+    cat.go_walk();
+    cat.talk();
+}
 fn do_impl_trait3() {
     struct Person {
         first_name: String,
