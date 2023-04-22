@@ -1,4 +1,15 @@
+use std::io;
+
 fn main() {
-    println!("cargo run: build and run");
-    println!("cargo check, c:    Analyze the current package and report errors, but don't build object files");
+    println!("Guess the number!");
+
+    println!("Please input your guess.");
+
+    let mut guess = String::new();
+
+    io::stdin()
+        .read_line(&mut guess)
+        .expect("Failed to read line");
+
+    println!("You guessed: {guess}");
 }
