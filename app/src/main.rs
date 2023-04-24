@@ -41,7 +41,6 @@ fn doPrint() {
 
     #[allow(dead_code)] // disable `dead_code` which warn against unused module
     struct Structure(i32);
-
     // This will not compile because `Structure` does not implement
     // fmt::Display.
     //println!("This struct `{}` won't print...", Structure(3));
