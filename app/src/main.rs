@@ -45,7 +45,6 @@ fn do_print() {
              object="the lazy dog",
              subject="the quick brown fox",
              verb="jumps over");
-
     // Different formatting can be invoked by specifying the format character
     // after a `:`.
     println!("Base 10:               {}",   69420); // 69420
