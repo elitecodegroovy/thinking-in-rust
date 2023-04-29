@@ -1,13 +1,14 @@
 #![allow(dead_code)]
 
 use std::io;
-
+use std::str::FromStr;
+use std::fmt; // Import the `fmt` module.
 #[derive(Debug)]
 struct Person<'a> {
     name: &'a str,
     age: u8
 }
-use std::fmt; // Import the `fmt` module.
+
 
 // Define a structure named `List` containing a `Vec`.
 struct List(Vec<i32>);
@@ -75,6 +76,266 @@ fn inspect(event: WebEvent) {
             println!("clicked at x={}, y={}.", x, y);
         },
     }
+}
+
+struct Circle {
+    radius: i32
+}
+
+impl fmt::Display for Circle {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Circle {}", self.radius)
+    }
+}
+
+mod file;
+
+fn function() {
+    println!("called `function()`");
+}
+
+fn do_mod() {
+    function();
+    file::index::function();
+    file::indirect_access();
+    file::indirect_access();
+    file::function()
+}
+fn do_HOF() {
+    println!("Find the sum of all the squared odd numbers under 1000");
+    let upper = 1000;
+
+    // Imperative approach
+    // Declare accumulator variable
+    let mut acc = 0;
+
+    fn is_odd(n: u32) -> bool {
+        n % 2 == 1
+    }
+
+    // Functional approach
+    let sum_of_squared_odd_numbers: u32 =
+        (0..).map(|n| n * n)                             // All natural numbers squared
+            .take_while(|&n_squared| n_squared < upper) // Below upper limit
+            .filter(|&n_squared| is_odd(n_squared))     // That are odd
+            .sum();                                     // Sum them
+    println!("functional style: {}", sum_of_squared_odd_numbers);
+
+    fn sum_odd_numbers(up_to: u32) -> u32 {
+        let mut acc = 0;
+        for i in 0..up_to {
+            // Notice that the return type of this match expression must be u32
+            // because of the type of the "addition" variable.
+            let addition: u32 = match i%2 == 1 {
+                // The "i" variable is of type u32, which is perfectly fine.
+                true => i,
+                // On the other hand, the "continue" expression does not return
+                // u32, but it is still fine, because it never returns and therefore
+                // does not violate the type requirements of the match expression.
+                false => continue,
+            };
+            acc += addition;
+        }
+        acc
+    }
+    println!("Sum of odd numbers up to 9 (excluding): {}", sum_odd_numbers(9));
+
+    do_mod();
+}
+fn do_output_fn() {
+    fn create_fn() -> impl Fn() {
+        let text = "Fn".to_owned();
+
+        move || println!("This is a: {}", text)
+    }
+
+    fn create_fnmut() -> impl FnMut() {
+        let text = "FnMut".to_owned();
+
+        move || println!("This is a: {}", text)
+    }
+
+    fn create_fnonce() -> impl FnOnce() {
+        let text = "FnOnce".to_owned();
+
+        move || println!("This is a: {}", text)
+    }
+
+    let fn_plain = create_fn();
+    let mut fn_mut = create_fnmut();
+    let fn_once = create_fnonce();
+
+    fn_plain();
+    fn_mut();
+    fn_once();
+    let vec1 = vec![1, 2, 3];
+    let vec2 = vec![4, 5, 6];
+
+    // `iter()` for vecs yields `&i32`. Destructure to `i32`.
+    println!("2 in vec1: {}", vec1.iter()     .any(|&x| x == 2));
+    // `into_iter()` for vecs yields `i32`. No destructuring required.
+    println!("2 in vec2: {}", vec2.into_iter().any(|x| x == 2));
+
+    // `iter()` only borrows `vec1` and its elements, so they can be used again
+    println!("vec1 len: {}", vec1.len());
+    println!("First element of vec1 is: {}", vec1[0]);
+
+    let vec1 = vec![1, 2, 3];
+    let vec2 = vec![4, 5, 6];
+
+    // `iter()` for vecs yields `&i32`.
+    let mut iter = vec1.iter();
+    // `into_iter()` for vecs yields `i32`.
+    let mut into_iter = vec2.into_iter();
+
+    // `iter()` for vecs yields `&i32`, and we want to reference one of its
+    // items, so we have to destructure `&&i32` to `i32`
+    println!("Find 2 in vec1: {:?}", iter     .find(|&&x| x == 2));
+    // `into_iter()` for vecs yields `i32`, and we want to reference one of
+    // its items, so we have to destructure `&i32` to `i32`
+    println!("Find 2 in vec2: {:?}", into_iter.find(| &x| x == 2));
+
+    let array1 = [1, 2, 3];
+    let array2 = [4, 5, 6];
+
+    // `iter()` for arrays yields `&i32`
+    println!("Find 2 in array1: {:?}", array1.iter()     .find(|&&x| x == 2));
+    // `into_iter()` for arrays yields `i32`
+    println!("Find 2 in array2: {:?}", array2.into_iter().find(|&x| x == 2));
+
+    do_HOF()
+}
+
+fn input_param_closure() {
+    // <F> denotes that F is a "Generic type parameter"
+    fn apply<F>(f: F) where
+    // The closure takes no input and returns nothing.
+        F: FnOnce() {
+        // ^ TODO: Try changing this to `Fn` or `FnMut`.
+
+        f();
+    }
+
+    // A function which takes a closure and returns an `i32`.
+    fn apply_to_3<F>(f: F) -> i32 where
+    // The closure takes an `i32` and returns an `i32`.
+        F: Fn(i32) -> i32 {
+
+        f(3)
+    }
+
+    use std::mem;
+
+    let greeting = "hello";
+    // A non-copy type.
+    // `to_owned` creates owned data from borrowed one
+    let mut farewell = "goodbye".to_owned();
+
+    // Capture 2 variables: `greeting` by reference and
+    // `farewell` by value.
+    let diary = || {
+        // `greeting` is by reference: requires `Fn`.
+        println!("I said {}.", greeting);
+
+        // Mutation forces `farewell` to be captured by
+        // mutable reference. Now requires `FnMut`.
+        farewell.push_str("!!!");
+        println!("Then I screamed {}.", farewell);
+        println!("Now I can sleep. zzzzz");
+
+        // Manually calling drop forces `farewell` to
+        // be captured by value. Now requires `FnOnce`.
+        mem::drop(farewell);
+    };
+
+    // Call the function which applies the closure.
+    apply(diary);
+
+    // `double` satisfies `apply_to_3`'s trait bound
+    let double = |x| 2 * x;
+
+    println!("3 doubled: {}", apply_to_3(double));
+
+    do_output_fn();
+}
+fn do_closure() {
+    use std::mem;
+
+    let color = String::from("green");
+
+    // A closure to print `color` which immediately borrows (`&`) `color` and
+    // stores the borrow and closure in the `print` variable. It will remain
+    // borrowed until `print` is used the last time.
+    //
+    // `println!` only requires arguments by immutable reference so it doesn't
+    // impose anything more restrictive.
+    let print = || println!("`color`: {}", color);
+
+    // Call the closure using the borrow.
+    print();
+
+    // `color` can be borrowed immutably again, because the closure only holds
+    // an immutable reference to `color`.
+    let _reborrow = &color;
+    print();
+
+    // A move or reborrow is allowed after the final use of `print`
+    let _color_moved = color;
+
+
+    let mut count = 0;
+    // A closure to increment `count` could take either `&mut count` or `count`
+    // but `&mut count` is less restrictive so it takes that. Immediately
+    // borrows `count`.
+    //
+    // A `mut` is required on `inc` because a `&mut` is stored inside. Thus,
+    // calling the closure mutates the closure which requires a `mut`.
+    let mut inc = || {
+        count += 1;
+        println!("`count`: {}", count);
+    };
+
+    // Call the closure using a mutable borrow.
+    inc();
+
+    // The closure still mutably borrows `count` because it is called later.
+    // An attempt to reborrow will lead to an error.
+    inc();
+    let _count_reborrowed = &mut count;
+
+
+    // A non-copy type.
+    let movable = Box::new(3);
+
+    // `mem::drop` requires `T` so this must take by value. A copy type
+    // would copy into the closure leaving the original untouched.
+    // A non-copy must move and so `movable` immediately moves into
+    // the closure.
+    let consume = || {
+        println!("`movable`: {:?}", movable);
+        mem::drop(movable);
+    };
+
+    // `consume` consumes the variable so this can only be called once.
+    consume();
+    let _count_reborrowed = &mut count;
+
+
+    // A non-copy type.
+    let movable = Box::new(3);
+
+    // `mem::drop` requires `T` so this must take by value. A copy type
+    // would copy into the closure leaving the original untouched.
+    // A non-copy must move and so `movable` immediately moves into
+    // the closure.
+    let consume = || {
+        println!("`movable`: {:?}", movable);
+        mem::drop(movable);
+    };
+
+    // `consume` consumes the variable so this can only be called once.
+    consume();
+    input_param_closure()
 }
 
 fn do_print() {
@@ -324,6 +585,169 @@ fn do_print() {
     println!("x is {:?}", x);
     println!("y is {:?}", y);
     println!("z is {:?}", z);
+
+    let circle = Circle { radius: 6 };
+    let circleStr = circle.to_string();
+    println!(" circle radius: {}", circleStr);
+
+    let parsed: i32 = "5".parse().unwrap();
+    let turbo_parsed = "10".parse::<i32>().unwrap();
+
+    let sum = parsed + turbo_parsed;
+    println!("Sum: {:?}", sum);
+
+    // 1. iter_mut
+    let mut names = vec!["Bob", "Frank", "Ferris"];
+    for name in names.iter_mut() {
+        *name = match name {
+            &mut "Ferris" => "There is a rustacean among us!",
+            _ => "Hello",
+        }
+    }
+    println!("names: {:?}", names);
+
+    let names = vec!["Bob", "Frank", "Ferris"];
+
+    for name in names.into_iter() {
+        match name {
+            "Ferris" => println!("There is a rustacean among us!"),
+            _ => println!("Hello {}", name),
+        }
+    }
+    // println!("names: {:?}", names);
+    let names = vec!["Bob", "Frank", "Ferris"];
+
+    for name in names.iter() {
+        match name {
+            &"Ferris" => println!("There is a rustacean among us!"),
+            // TODO ^ Try deleting the & and matching just "Ferris"
+            _ => println!("Hello {}", name),
+        }
+    }
+
+    println!("names: {:?}", names);
+
+    let number = 13;
+    // TODO ^ Try different values for `number`
+
+    println!("Tell me about {}", number);
+    match number {
+        // Match a single value
+        13 => println!("13!"),
+        // Match several values
+        2 | 3 | 5 | 7 | 11 => println!("This is a prime"),
+        // TODO ^ Try adding 13 to the list of prime values
+        // Match an inclusive range
+        13..=19 => println!("A teen"),
+        // Handle the rest of cases
+        _ => println!("Ain't special"),
+        // TODO ^ Try commenting out this catch-all arm
+    }
+
+    let number: u8 = 4;
+
+    match number {
+        i if i == 0 => println!("Zero"),
+        i if i > 0 => println!("Greater than zero"),
+        // _ => unreachable!("Should never happen."),
+        // TODO ^ uncomment to fix compilation
+        _ => {}
+    }
+
+    fn some_number() -> Option<u32> {
+        Some(42)
+    }
+    match some_number() {
+        // Got `Some` variant, match if its value, bound to `n`,
+        // is equal to 42.
+        Some(n @ 42) => println!("The Answer: {}!", n),
+        // Match any other number.
+        Some(n)      => println!("Not interesting... {}", n),
+        // Match anything else (`None` variant).
+        _            => (),
+    }
+
+    // All have type `Option<i32>`
+    let number = Some(7);
+    let letter: Option<i32> = None;
+    let emoticon: Option<i32> = None;
+
+    // The `if let` construct reads: "if `let` destructures `number` into
+    // `Some(i)`, evaluate the block (`{}`).
+    if let Some(i) = number {
+        println!("Matched {:?}!", i);
+    }
+
+    // If you need to specify a failure, use an else:
+    if let Some(i) = letter {
+        println!("Matched {:?}!", i);
+    } else {
+        // Destructure failed. Change to the failure case.
+        println!("Didn't match a number. Let's go with a letter!");
+    }
+
+    // Provide an altered failing condition.
+    let i_like_letters = false;
+
+    if let Some(i) = emoticon {
+        println!("Matched {:?}!", i);
+        // Destructure failed. Evaluate an `else if` condition to see if the
+        // alternate failure branch should be taken:
+    } else if i_like_letters {
+        println!("Didn't match a number. Let's go with a letter!");
+    } else {
+        // The condition evaluated false. This branch is the default:
+        println!("I don't like letters. Let's go with an emoticon :)!");
+    }
+
+    fn get_count_item(s: &str) -> (u64, &str) {
+        let mut it = s.split(' ');
+        let (Some(count_str), Some(item)) = (it.next(), it.next()) else {
+            panic!("Can't segment count item pair: '{s}'");
+        };
+        let Ok(count) = u64::from_str(count_str) else {
+            panic!("Can't parse integer: '{count_str}'");
+        };
+        (count, item)
+    }
+
+    assert_eq!(get_count_item("3 chairs"), (3, "chairs"));
+    // Make `optional` of type `Option<i32>`
+    let mut optional = Some(0);
+
+    // This reads: "while `let` destructures `optional` into
+    // `Some(i)`, evaluate the block (`{}`). Else `break`.
+    while let Some(i) = optional {
+        if i > 2 {
+            println!("Greater than 9, quit!");
+            optional = None;
+        } else {
+            println!("`i` is `{:?}`. Try again.", i);
+            optional = Some(i + 1);
+        }
+        // ^ Less rightward drift and doesn't require
+        // explicitly handling the failing case.
+    }
+    // ^ `if let` had additional optional `else`/`else if`
+    // clauses. `while let` does not have these.
+    let outer_var = 42;
+
+    // A regular function can't refer to variables in the enclosing environment
+    //fn function(i: i32) -> i32 { i + outer_var }
+    // TODO: uncomment the line above and see the compiler error. The compiler
+    // suggests that we define a closure instead.
+
+    // Closures are anonymous, here we are binding them to references
+    // Annotation is identical to function annotation but is optional
+    // as are the `{}` wrapping the body. These nameless functions
+    // are assigned to appropriately named variables.
+    let closure_annotated = |i: i32| -> i32 { i + outer_var };
+    // let closure_inferred  = |i     |          i + outer_var  ;
+
+    // Call the closures.
+    println!("closure_annotated: {}", closure_annotated(1));
+    // println!("closure_inferred: {}", closure_inferred(1));
+    do_closure();
 }
 
 fn main() {
