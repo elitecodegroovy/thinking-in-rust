@@ -90,16 +90,35 @@ impl fmt::Display for Circle {
 
 mod file;
 
+#[cfg(target_os = "linux")]
+fn are_you_on_linux() {
+    println!("You are running linux!");
+}
+
+// And this function only gets compiled if the target OS is *not* linux
+#[cfg(not(target_os = "linux"))]
+fn are_you_on_linux() {
+    println!("You are *not* running linux!");
+}
+
 fn function() {
     println!("called `function()`");
+    are_you_on_linux();
+    println!("Are you sure?");
+    if cfg!(target_os = "linux") {
+        println!("Yes. It's definitely linux!");
+    } else {
+        println!("Yes. It's definitely *not* linux!");
+    }
 }
 
 fn do_mod() {
-    function();
+
     file::index::function();
     file::indirect_access();
     file::indirect_access();
-    file::function()
+    file::function();
+    function();
 }
 fn do_HOF() {
     println!("Find the sum of all the squared odd numbers under 1000");
