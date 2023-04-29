@@ -129,9 +129,9 @@ fn do_mod() {
 
     file::index::function();
     file::indirect_access();
-    file::indirect_access();
     file::function();
     function();
+    file::inaccessible_fn();
 }
 fn do_HOF() {
     println!("Find the sum of all the squared odd numbers under 1000");
