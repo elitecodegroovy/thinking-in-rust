@@ -101,6 +101,17 @@ fn are_you_on_linux() {
     println!("You are *not* running linux!");
 }
 
+#[cfg(c_os = "linux")]
+fn are_you_c_os() {
+    println!("You are running c os linux!");
+}
+
+// And this function only gets compiled if the target OS is *not* linux
+#[cfg(not(c_os = "linux"))]
+fn are_you_c_os() {
+    println!("You are *not* c os Linux!");
+}
+
 fn function() {
     println!("called `function()`");
     are_you_on_linux();
@@ -110,6 +121,8 @@ fn function() {
     } else {
         println!("Yes. It's definitely *not* linux!");
     }
+    // custom
+    are_you_c_os();
 }
 
 fn do_mod() {
@@ -220,7 +233,7 @@ fn do_output_fn() {
     // `iter()` for arrays yields `&i32`
     println!("Find 2 in array1: {:?}", array1.iter()     .find(|&&x| x == 2));
     // `into_iter()` for arrays yields `i32`
-    println!("Find 2 in array2: {:?}", array2.into_iter().find(|&x| x == 2));
+    // println!("Find 2 in array2: {:?}", array2.into_iter().find(|&x| x == 2));
 
     do_HOF()
 }
