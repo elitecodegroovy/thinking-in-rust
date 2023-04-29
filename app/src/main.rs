@@ -252,7 +252,6 @@ fn input_param_closure() {
     fn apply_to_3<F>(f: F) -> i32 where
     // The closure takes an `i32` and returns an `i32`.
         F: Fn(i32) -> i32 {
-
         f(3)
     }
 
