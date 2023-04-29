@@ -254,7 +254,6 @@ fn input_param_closure() {
         F: Fn(i32) -> i32 {
         f(3)
     }
-
     use std::mem;
 
     let greeting = "hello";
