@@ -18,3 +18,4 @@ pub fn indirect_access() {
 pub fn inaccessible_fn() {
     inaccessible::public_function()
 }
+
