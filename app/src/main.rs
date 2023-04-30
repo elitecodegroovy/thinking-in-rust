@@ -3,6 +3,7 @@
 use std::io;
 use std::str::FromStr;
 use std::fmt; // Import the `fmt` module.
+use std::collections::HashMap;
 #[derive(Debug)]
 struct Person<'a> {
     name: &'a str,
@@ -780,6 +781,18 @@ fn do_print() {
     do_closure();
 }
 
-fn main() {
+
+fn entry_point() {
     do_print()
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    entry_point();
+    let resp = reqwest::get("https://httpbin.org/ip")
+        .await?
+        .json::<HashMap<String, String>>()
+        .await?;
+    println!("{:#?}", resp);
+    Ok(())
 }
