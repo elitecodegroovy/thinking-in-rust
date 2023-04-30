@@ -157,6 +157,7 @@ pub fn public_function() {
         // Attempt to borrow `_ref_to_i32` after inner value is destroyed
         borrow_i32(_ref_to_i32);
         // `_ref_to_i32` goes out of scope and is no longer borrowed.
+
     }
 
     // `boxed_i32` can now give up ownership to `eat_box` and be destroyed
