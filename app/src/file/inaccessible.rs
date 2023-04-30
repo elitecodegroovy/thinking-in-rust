@@ -1,3 +1,4 @@
+#![allow(clippy::needless_lifetimes)]
 
 struct Container(i32, i32);
 
@@ -234,7 +235,109 @@ fn do_mutation() {
     println!("Point now has coordinates: ({}, {}, {})",
              new_borrowed_point.x, new_borrowed_point.y, new_borrowed_point.z);
 
+    // Create variables to be borrowed below.
+    let (four, nine) = (4, 9);
 
+    // Borrows (`&`) of both variables are passed into the function.
+    print_refs(&four, &nine);
+
+    let mut owner = Owner(18);
+
+    owner.add_one();
+    owner.print();
+
+    let first = 2; // Longer lifetime
+
+    {
+        let second = 3; // Shorter lifetime
+
+        println!("The product is {}", multiply(&first, &second));
+        println!("{} is the first", choose_first(&first, &second));
+    };
+
+    let random_number = 0.234;
+    let animal = random_animal(random_number);
+    println!("You've randomly chosen an animal, and it says {}", animal.noise());
+
+    let _a = Droppable { name: "a" };
+
+    // block A
+    {
+        let _b = Droppable { name: "b" };
+
+        // block B
+        {
+            let _c = Droppable { name: "c" };
+            let _d = Droppable { name: "d" };
+
+            println!("Exiting block B");
+        }
+        println!("Just exited block B");
+
+        println!("Exiting block A");
+    }
+    println!("Just exited block A");
+
+    // Variable can be manually dropped using the `drop` function
+    drop(_a);
+    // TODO ^ Try commenting this line
+
+    println!("end of the main function");
+
+    // `_a` *won't* be `drop`ed again here, because it already has been
+    // (manually) `drop`ed
+}
+struct Droppable {
+    name: &'static str,
+}
+
+// This trivial implementation of `drop` adds a print to console.
+impl Drop for Droppable {
+    fn drop(&mut self) {
+        println!("> Dropping {}", self.name);
+    }
+}
+
+struct Sheep {}
+struct Cow {}
+
+trait Animal {
+    // Instance method signature
+    fn noise(&self) -> &'static str;
+}
+
+// Implement the `Animal` trait for `Sheep`.
+impl Animal for Sheep {
+    fn noise(&self) -> &'static str {
+        "baaaaah!"
+    }
+}
+
+// Implement the `Animal` trait for `Cow`.
+impl Animal for Cow {
+    fn noise(&self) -> &'static str {
+        "moooooo!"
+    }
+}
+
+// Returns some struct that implements Animal, but we don't know which one at compile time.
+fn random_animal(random_number: f64) -> Box<dyn Animal> {
+    if random_number < 0.5 {
+        Box::new(Sheep {})
+    } else {
+        Box::new(Cow {})
+    }
+}
+// Here, Rust infers a lifetime that is as short as possible.
+// The two references are then coerced to that lifetime.
+fn multiply<'a>(first: &'a i32, second: &'a i32) -> i32 {
+    first * second
+}
+
+// `<'a: 'b, 'b>` reads as lifetime `'a` is at least as long as `'b`.
+// Here, we take in an `&'a i32` and return a `&'b i32` as a result of coercion.
+fn choose_first<'a: 'b, 'b>(first: &'a i32, _: &'b i32) -> &'b i32 {
+    first
 }
 
 #[derive(Clone, Copy)]
@@ -265,4 +368,46 @@ fn eat_box_i32(boxed_i32: Box<i32>) {
 // This function borrows an i32
 fn borrow_i32(borrowed_i32: &i32) {
     println!("This int is: {}", borrowed_i32);
+}
+
+///
+///
+/// # Arguments
+///
+/// * `x`:
+/// * `y`:
+///
+/// returns: ()
+///
+/// # Examples
+///
+/// ```
+///
+/// ```
+// `print_refs` takes two references to `i32` which have different
+// lifetimes `'a` and `'b`. These two lifetimes must both be at
+// least as long as the function `print_refs`.
+fn print_refs<'a, 'b>(x: &'a i32, y: &'b i32) {
+    println!("x is {} and y is {}", x, y);
+}
+
+// A function which takes no arguments, but has a lifetime parameter `'a`.
+fn failed_borrow<'a>() {
+    let _x = 12;
+
+    // ERROR: `_x` does not live long enough
+    // let y: &'a i32 = &_x;
+    // Attempting to use the lifetime `'a` as an explicit type annotation
+    // inside the function will fail because the lifetime of `&_x` is shorter
+    // than that of `y`. A short lifetime cannot be coerced into a longer one.
+}
+
+struct Owner(i32);
+
+impl Owner {
+    // Annotate lifetimes as in a standalone function.
+    fn add_one<'a>(&'a mut self) { self.0 += 1; }
+    fn print<'a>(&'a self) {
+        println!("`print`: {}", self.0);
+    }
 }
