@@ -786,13 +786,16 @@ fn entry_point() {
     do_print()
 }
 
+use std::io::{Error, ErrorKind};
+use warp::Filter;
+
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main(){
     entry_point();
-    let resp = reqwest::get("https://httpbin.org/ip")
-        .await?
-        .json::<HashMap<String, String>>()
-        .await?;
-    println!("{:#?}", resp);
-    Ok(())
+
+    let hello = warp::get()
+        .map(|| format!("Hello, World!"));
+    warp::serve(hello)
+        .run(([127, 0, 0, 1], 3030))
+        .await;
 }
