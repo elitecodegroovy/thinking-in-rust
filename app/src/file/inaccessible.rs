@@ -118,6 +118,7 @@ pub fn public_function() {
         name: String,
         age: Box<u8>,
     }
+
     let person = Person {
         name: String::from("Alice"),
         age: Box::new(20),
