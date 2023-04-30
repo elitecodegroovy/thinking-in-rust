@@ -112,6 +112,7 @@ pub fn public_function() {
     // Modify the contents of the box
     *mutable_box = 4;
     println!("mutable_box now contains {}", mutable_box);
+
     #[derive(Debug)]
     struct Person {
         name: String,
