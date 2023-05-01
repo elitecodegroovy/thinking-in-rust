@@ -1,15 +1,14 @@
 #![allow(dead_code)]
 
+use std::collections::HashMap;
+use std::fmt; // Import the `fmt` module.
 use std::io;
 use std::str::FromStr;
-use std::fmt; // Import the `fmt` module.
-use std::collections::HashMap;
 #[derive(Debug)]
 struct Person<'a> {
     name: &'a str,
-    age: u8
+    age: u8,
 }
-
 
 // Define a structure named `List` containing a `Vec`.
 struct List(Vec<i32>);
@@ -27,7 +26,9 @@ impl fmt::Display for List {
         for (count, v) in vec.iter().enumerate() {
             // For every element except the first, add a comma.
             // Use the ? operator to return on errors.
-            if count != 0 { write!(f, ", ")?; }
+            if count != 0 {
+                write!(f, ", ")?;
+            }
             write!(f, "{}", v)?;
         }
 
@@ -75,12 +76,12 @@ fn inspect(event: WebEvent) {
         // Destructure `Click` into `x` and `y`.
         WebEvent::Click { x, y } => {
             println!("clicked at x={}, y={}.", x, y);
-        },
+        }
     }
 }
 
 struct Circle {
-    radius: i32
+    radius: i32,
 }
 
 impl fmt::Display for Circle {
@@ -127,7 +128,6 @@ fn function() {
 }
 
 fn do_mod() {
-
     file::index::function();
     file::indirect_access();
     file::function();
@@ -147,11 +147,11 @@ fn do_HOF() {
     }
 
     // Functional approach
-    let sum_of_squared_odd_numbers: u32 =
-        (0..).map(|n| n * n)                             // All natural numbers squared
-            .take_while(|&n_squared| n_squared < upper) // Below upper limit
-            .filter(|&n_squared| is_odd(n_squared))     // That are odd
-            .sum();                                     // Sum them
+    let sum_of_squared_odd_numbers: u32 = (0..)
+        .map(|n| n * n) // All natural numbers squared
+        .take_while(|&n_squared| n_squared < upper) // Below upper limit
+        .filter(|&n_squared| is_odd(n_squared)) // That are odd
+        .sum(); // Sum them
     println!("functional style: {}", sum_of_squared_odd_numbers);
 
     fn sum_odd_numbers(up_to: u32) -> u32 {
@@ -159,7 +159,7 @@ fn do_HOF() {
         for i in 0..up_to {
             // Notice that the return type of this match expression must be u32
             // because of the type of the "addition" variable.
-            let addition: u32 = match i%2 == 1 {
+            let addition: u32 = match i % 2 == 1 {
                 // The "i" variable is of type u32, which is perfectly fine.
                 true => i,
                 // On the other hand, the "continue" expression does not return
@@ -171,7 +171,10 @@ fn do_HOF() {
         }
         acc
     }
-    println!("Sum of odd numbers up to 9 (excluding): {}", sum_odd_numbers(9));
+    println!(
+        "Sum of odd numbers up to 9 (excluding): {}",
+        sum_odd_numbers(9)
+    );
 
     do_mod();
 }
@@ -205,7 +208,7 @@ fn do_output_fn() {
     let vec2 = vec![4, 5, 6];
 
     // `iter()` for vecs yields `&i32`. Destructure to `i32`.
-    println!("2 in vec1: {}", vec1.iter()     .any(|&x| x == 2));
+    println!("2 in vec1: {}", vec1.iter().any(|&x| x == 2));
     // `into_iter()` for vecs yields `i32`. No destructuring required.
     println!("2 in vec2: {}", vec2.into_iter().any(|x| x == 2));
 
@@ -223,16 +226,16 @@ fn do_output_fn() {
 
     // `iter()` for vecs yields `&i32`, and we want to reference one of its
     // items, so we have to destructure `&&i32` to `i32`
-    println!("Find 2 in vec1: {:?}", iter     .find(|&&x| x == 2));
+    println!("Find 2 in vec1: {:?}", iter.find(|&&x| x == 2));
     // `into_iter()` for vecs yields `i32`, and we want to reference one of
     // its items, so we have to destructure `&i32` to `i32`
-    println!("Find 2 in vec2: {:?}", into_iter.find(| &x| x == 2));
+    println!("Find 2 in vec2: {:?}", into_iter.find(|&x| x == 2));
 
     let array1 = [1, 2, 3];
     let array2 = [4, 5, 6];
 
     // `iter()` for arrays yields `&i32`
-    println!("Find 2 in array1: {:?}", array1.iter()     .find(|&&x| x == 2));
+    println!("Find 2 in array1: {:?}", array1.iter().find(|&&x| x == 2));
     // `into_iter()` for arrays yields `i32`
     // println!("Find 2 in array2: {:?}", array2.into_iter().find(|&x| x == 2));
 
@@ -241,18 +244,22 @@ fn do_output_fn() {
 
 fn input_param_closure() {
     // <F> denotes that F is a "Generic type parameter"
-    fn apply<F>(f: F) where
-    // The closure takes no input and returns nothing.
-        F: FnOnce() {
+    fn apply<F>(f: F)
+    where
+        // The closure takes no input and returns nothing.
+        F: FnOnce(),
+    {
         // ^ TODO: Try changing this to `Fn` or `FnMut`.
 
         f();
     }
 
     // A function which takes a closure and returns an `i32`.
-    fn apply_to_3<F>(f: F) -> i32 where
-    // The closure takes an `i32` and returns an `i32`.
-        F: Fn(i32) -> i32 {
+    fn apply_to_3<F>(f: F) -> i32
+    where
+        // The closure takes an `i32` and returns an `i32`.
+        F: Fn(i32) -> i32,
+    {
         f(3)
     }
     use std::mem;
@@ -313,7 +320,6 @@ fn do_closure() {
     // A move or reborrow is allowed after the final use of `print`
     let _color_moved = color;
 
-
     let mut count = 0;
     // A closure to increment `count` could take either `&mut count` or `count`
     // but `&mut count` is less restrictive so it takes that. Immediately
@@ -334,7 +340,6 @@ fn do_closure() {
     inc();
     let _count_reborrowed = &mut count;
 
-
     // A non-copy type.
     let movable = Box::new(3);
 
@@ -350,7 +355,6 @@ fn do_closure() {
     // `consume` consumes the variable so this can only be called once.
     consume();
     let _count_reborrowed = &mut count;
-
 
     // A non-copy type.
     let movable = Box::new(3);
@@ -375,30 +379,30 @@ fn do_print() {
     // at 0 immediately after the format string.
     println!("{0}, this is {1}. {1}, this is {0}", "Alice", "Bob");
     // As can named arguments.
-    println!("{subject} {verb} {object}",
-             object="the lazy dog",
-             subject="the quick brown fox",
-             verb="jumps over");
+    println!(
+        "{subject} {verb} {object}",
+        object = "the lazy dog",
+        subject = "the quick brown fox",
+        verb = "jumps over"
+    );
     // Different formatting can be invoked by specifying the format character
     // after a `:`.
-    println!("Base 10:               {}",   69420); // 69420
+    println!("Base 10:               {}", 69420); // 69420
     println!("Base 2 (binary):       {:b}", 69420); // 10000111100101100
     println!("Base 8 (octal):        {:o}", 69420); // 207454
     println!("Base 16 (hexadecimal): {:x}", 69420); // 10f2c
     println!("Base 16 (hexadecimal): {:X}", 69420); // 10F2C
 
-
     // You can right-justify text with a specified width. This will
     // output "    1". (Four white spaces and a "1", for a total width of 5.)
-    println!("{number:>5}", number=1);
+    println!("{number:>5}", number = 1);
 
     // You can pad numbers with extra zeroes,
     // and left-adjust by flipping the sign. This will output "10000".
-    println!("{number:0<5}", number=1);
+    println!("{number:0<5}", number = 1);
 
     // You can use named arguments in the format specifier by appending a `$`.
-    println!("{number:0>width$}", number=1, width=5);
-
+    println!("{number:0>width$}", number = 1, width = 5);
 
     // Rust even checks to make sure the correct number of arguments are used.
     println!("My name is {0}, {1} {0}", "Bond", "avc");
@@ -434,12 +438,12 @@ fn do_print() {
     // Variables can be type annotated.
     let logical: bool = true;
 
-    let a_float: f64 = 1.0;  // Regular annotation
-    let an_integer   = 5i32; // Suffix annotation
+    let a_float: f64 = 1.0; // Regular annotation
+    let an_integer = 5i32; // Suffix annotation
 
     // Or a default will be used.
-    let default_float   = 3.0; // `f64`
-    let default_integer = 7;   // `i32`
+    let default_float = 3.0; // `f64`
+    let default_integer = 7; // `i32`
 
     // A type can also be inferred from context.
     let mut inferred_type = 12; // Type i64 is inferred from another line.
@@ -464,7 +468,6 @@ fn do_print() {
     println!("true OR false is {}", true || false);
     println!("NOT true is {}", !true);
 
-
     // Bitwise operations
     println!("0011 AND 0101 is {:04b}", 0b0011u32 & 0b0101);
     println!("0011 OR 0101 is {:04b}", 0b0011u32 | 0b0101);
@@ -476,10 +479,9 @@ fn do_print() {
     println!("One million is written as {}", 1_000_000u32);
 
     // A tuple with a bunch of different types.
-    let long_tuple = (1u8, 2u16, 3u32, 4u64,
-                      -1i8, -2i16, -3i32, -4i64,
-                      0.1f32, 0.2f64,
-                      'a', true);
+    let long_tuple = (
+        1u8, 2u16, 3u32, 4u64, -1i8, -2i16, -3i32, -4i64, 0.1f32, 0.2f64, 'a', true,
+    );
 
     // Values can be extracted from the tuple using tuple indexing.
     println!("Long tuple first value: {}", long_tuple.0);
@@ -517,10 +519,10 @@ fn do_print() {
 
     let pressed = WebEvent::KeyPress('x');
     // `to_owned()` creates an owned `String` from a string slice.
-    let pasted  = WebEvent::Paste("my text".to_owned());
-    let click   = WebEvent::Click { x: 20, y: 80 };
-    let load    = WebEvent::PageLoad;
-    let unload  = WebEvent::PageUnload;
+    let pasted = WebEvent::Paste("my text".to_owned());
+    let click = WebEvent::Click { x: 20, y: 80 };
+    let load = WebEvent::PageLoad;
+    let unload = WebEvent::PageUnload;
 
     inspect(pressed);
     inspect(pasted);
@@ -577,7 +579,10 @@ fn do_print() {
         // 300.0 as u8 is 44
         println!(" 300.0 as u8 is : {}", 300.0_f32.to_int_unchecked::<u8>());
         // -100.0 as u8 is 156
-        println!("-100.0 as u8 is : {}", (-100.0_f32).to_int_unchecked::<u8>());
+        println!(
+            "-100.0 as u8 is : {}",
+            (-100.0_f32).to_int_unchecked::<u8>()
+        );
         // nan as u8 is 0
         println!("   nan as u8 is : {}", f32::NAN.to_int_unchecked::<u8>());
     }
@@ -693,9 +698,9 @@ fn do_print() {
         // is equal to 42.
         Some(n @ 42) => println!("The Answer: {}!", n),
         // Match any other number.
-        Some(n)      => println!("Not interesting... {}", n),
+        Some(n) => println!("Not interesting... {}", n),
         // Match anything else (`None` variant).
-        _            => (),
+        _ => (),
     }
 
     // All have type `Option<i32>`
@@ -781,7 +786,6 @@ fn do_print() {
     do_closure();
 }
 
-
 fn entry_point() {
     do_print()
 }
@@ -790,12 +794,9 @@ use std::io::{Error, ErrorKind};
 use warp::Filter;
 
 #[tokio::main]
-async fn main(){
+async fn main() {
     entry_point();
 
-    let hello = warp::get()
-        .map(|| format!("Hello, World!"));
-    warp::serve(hello)
-        .run(([127, 0, 0, 1], 3030))
-        .await;
+    let hello = warp::get().map(|| format!("Hello, World!"));
+    warp::serve(hello).run(([127, 0, 0, 1], 3030)).await;
 }

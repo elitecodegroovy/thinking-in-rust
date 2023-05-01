@@ -5,13 +5,21 @@ trait HasArea {
 }
 
 impl HasArea for Rectangle {
-    fn area(&self) -> f64 { self.length * self.height }
+    fn area(&self) -> f64 {
+        self.length * self.height
+    }
 }
 
 #[derive(Debug)]
-struct Rectangle { length: f64, height: f64 }
+struct Rectangle {
+    length: f64,
+    height: f64,
+}
 #[allow(dead_code)]
-struct Triangle  { length: f64, height: f64 }
+struct Triangle {
+    length: f64,
+    height: f64,
+}
 
 // The generic `T` must implement `Debug`. Regardless
 // of the type, this will work properly.
@@ -21,7 +29,9 @@ fn print_debug<T: Debug>(t: &T) {
 
 // `T` must implement `HasArea`. Any type which meets
 // the bound can access `HasArea`'s function `area`.
-fn area<T: HasArea>(t: &T) -> f64 { t.area() }
+fn area<T: HasArea>(t: &T) -> f64 {
+    t.area()
+}
 fn compare_prints<T: Debug + Display>(t: &T) {
     println!("Debug: `{:?}`", t);
     println!("Display: `{}`", t);
@@ -35,8 +45,14 @@ fn compare_types<T: Debug, U: Debug>(t: &T, u: &U) {
 pub fn function() {
     println!("called `file::index::function()`");
 
-    let rectangle = Rectangle { length: 3.0, height: 4.0 };
-    let _triangle = Triangle  { length: 3.0, height: 4.0 };
+    let rectangle = Rectangle {
+        length: 3.0,
+        height: 4.0,
+    };
+    let _triangle = Triangle {
+        length: 3.0,
+        height: 4.0,
+    };
 
     print_debug(&rectangle);
     println!("Area: {}", area(&rectangle));
@@ -56,9 +72,12 @@ pub fn function() {
 
     let container = Container(number_1, number_2);
 
-    println!("Does container contain {} and {}: {}",
-             &number_1, &number_2,
-             container.contains(&number_1, &number_2));
+    println!(
+        "Does container contain {} and {}: {}",
+        &number_1,
+        &number_2,
+        container.contains(&number_1, &number_2)
+    );
     println!("First number: {}", container.first());
     println!("Last number: {}", container.last());
 
@@ -71,7 +90,7 @@ struct Container(i32, i32);
 trait Contains<A, B> {
     fn contains(&self, _: &A, _: &B) -> bool; // Explicitly requires `A` and `B`.
     fn first(&self) -> i32; // Doesn't explicitly require `A` or `B`.
-    fn last(&self) -> i32;  // Doesn't explicitly require `A` or `B`.
+    fn last(&self) -> i32; // Doesn't explicitly require `A` or `B`.
 }
 
 impl Contains<i32, i32> for Container {
@@ -81,16 +100,22 @@ impl Contains<i32, i32> for Container {
     }
 
     // Grab the first number.
-    fn first(&self) -> i32 { self.0 }
+    fn first(&self) -> i32 {
+        self.0
+    }
 
     // Grab the last number.
-    fn last(&self) -> i32 { self.1 }
+    fn last(&self) -> i32 {
+        self.1
+    }
 }
 
 // `C` contains `A` and `B`. In light of that, having to express `A` and
 // `B` again is a nuisance.
-fn difference<A, B, C>(container: &C) -> i32 where
-    C: Contains<A, B> {
+fn difference<A, B, C>(container: &C) -> i32
+where
+    C: Contains<A, B>,
+{
     container.last() - container.first()
 }
 

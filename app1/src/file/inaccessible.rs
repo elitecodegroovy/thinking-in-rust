@@ -26,10 +26,14 @@ impl Contains for Container {
         (&self.0 == number_1) && (&self.1 == number_2)
     }
     // Grab the first number.
-    fn first(&self) -> i32 { self.0 }
+    fn first(&self) -> i32 {
+        self.0
+    }
 
     // Grab the last number.
-    fn last(&self) -> i32 { self.1 }
+    fn last(&self) -> i32 {
+        self.1
+    }
 }
 
 fn difference<C: Contains>(container: &C) -> i32 {
@@ -57,9 +61,12 @@ pub fn public_function() {
 
     let container = Container(number_1, number_2);
 
-    println!("Does container contain {} and {}: {}",
-             &number_1, &number_2,
-             container.contains(&number_1, &number_2));
+    println!(
+        "Does container contain {} and {}: {}",
+        &number_1,
+        &number_2,
+        container.contains(&number_1, &number_2)
+    );
     println!("First number: {}", container.first());
     println!("Last number: {}", container.last());
 
@@ -158,7 +165,6 @@ pub fn public_function() {
         // Attempt to borrow `_ref_to_i32` after inner value is destroyed
         borrow_i32(_ref_to_i32);
         // `_ref_to_i32` goes out of scope and is no longer borrowed.
-
     }
 
     // `boxed_i32` can now give up ownership to `eat_box` and be destroyed
@@ -187,7 +193,11 @@ fn do_mutation() {
     // new_edition(&mut immutabook);
     // FIXME ^ Comment out this line
 
-    struct Point { x: i32, y: i32, z: i32 }
+    struct Point {
+        x: i32,
+        y: i32,
+        z: i32,
+    }
 
     let mut point = Point { x: 0, y: 0, z: 0 };
 
@@ -195,8 +205,10 @@ fn do_mutation() {
     let another_borrow = &point;
 
     // Data can be accessed via the references and the original owner
-    println!("Point has coordinates: ({}, {}, {})",
-             borrowed_point.x, another_borrow.y, point.z);
+    println!(
+        "Point has coordinates: ({}, {}, {})",
+        borrowed_point.x, another_borrow.y, point.z
+    );
 
     // Error! Can't borrow `point` as mutable because it's currently
     // borrowed as immutable.
@@ -204,8 +216,10 @@ fn do_mutation() {
     // TODO ^ Try uncommenting this line
 
     // The borrowed values are used again here
-    println!("Point has coordinates: ({}, {}, {})",
-             borrowed_point.x, another_borrow.y, point.z);
+    println!(
+        "Point has coordinates: ({}, {}, {})",
+        borrowed_point.x, another_borrow.y, point.z
+    );
 
     // The immutable references are no longer used for the rest of the code so
     // it is possible to reborrow with a mutable reference.
@@ -226,14 +240,18 @@ fn do_mutation() {
     // TODO ^ Try uncommenting this line
 
     // Ok! Mutable references can be passed as immutable to `println!`
-    println!("Point has coordinates: ({}, {}, {})",
-             mutable_borrow.x, mutable_borrow.y, mutable_borrow.z);
+    println!(
+        "Point has coordinates: ({}, {}, {})",
+        mutable_borrow.x, mutable_borrow.y, mutable_borrow.z
+    );
 
     // The mutable reference is no longer used for the rest of the code so it
     // is possible to reborrow
     let new_borrowed_point = &point;
-    println!("Point now has coordinates: ({}, {}, {})",
-             new_borrowed_point.x, new_borrowed_point.y, new_borrowed_point.z);
+    println!(
+        "Point now has coordinates: ({}, {}, {})",
+        new_borrowed_point.x, new_borrowed_point.y, new_borrowed_point.z
+    );
 
     // Create variables to be borrowed below.
     let (four, nine) = (4, 9);
@@ -257,7 +275,10 @@ fn do_mutation() {
 
     let random_number = 0.234;
     let animal = random_animal(random_number);
-    println!("You've randomly chosen an animal, and it says {}", animal.noise());
+    println!(
+        "You've randomly chosen an animal, and it says {}",
+        animal.noise()
+    );
 
     let _a = Droppable { name: "a" };
 
@@ -335,7 +356,6 @@ fn do_mutation() {
     assert_eq!("rustacean".to_owned(), username);
     let age = <Form as AgeWidget>::get(&form);
     assert_eq!(28, age);
-
 }
 trait UsernameWidget {
     // Get the selected username out of this widget
@@ -373,7 +393,7 @@ struct Unit;
 struct Pair(Box<i32>, Box<i32>);
 
 fn make_adder_function(y: i32) -> impl Fn(i32) -> i32 {
-    let closure = move |x: i32| { x + y };
+    let closure = move |x: i32| x + y;
     closure
 }
 
@@ -440,7 +460,10 @@ struct Book {
 
 // This function takes a reference to a book
 fn borrow_book(book: &Book) {
-    println!("I immutably borrowed {} - {} edition", book.title, book.year);
+    println!(
+        "I immutably borrowed {} - {} edition",
+        book.title, book.year
+    );
 }
 
 // This function takes a reference to a mutable book and changes `year` to 2014
@@ -448,7 +471,6 @@ fn new_edition(book: &mut Book) {
     book.year = 2014;
     println!("I mutably borrowed {} - {} edition", book.title, book.year);
 }
-
 
 // This function takes ownership of a box and destroys it
 fn eat_box_i32(boxed_i32: Box<i32>) {
@@ -496,7 +518,9 @@ struct Owner(i32);
 
 impl Owner {
     // Annotate lifetimes as in a standalone function.
-    fn add_one<'a>(&'a mut self) { self.0 += 1; }
+    fn add_one<'a>(&'a mut self) {
+        self.0 += 1;
+    }
     fn print<'a>(&'a self) {
         println!("`print`: {}", self.0);
     }
