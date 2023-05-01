@@ -4,6 +4,12 @@
       "title": "How?",
       "content": "Please help!",
       "tags": ["general"]  
-    }
+    },
+  "2" : {
+    "id": "2",
+    "title": "How2?",
+    "content": "Please help 2!",
+    "tags": ["general 2"]
+  }
   }
   
