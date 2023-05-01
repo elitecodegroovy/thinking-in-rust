@@ -1,53 +1,66 @@
-use serde::{Deserialize, Serialize};
-use std::sync::Arc;
-use std::sync::Mutex;
-use warp::Filter;
+#![warn(clippy::all)]
 
-#[derive(Deserialize, Serialize)]
-struct Greeting {
-    message: String,
-}
+use handle_errors::return_error;
+use warp::{http::Method, Filter};
 
-async fn handle_get_greeting(
-    greetings: Arc<Mutex<Vec<Greeting>>>,
-) -> Result<impl warp::Reply, warp::Rejection> {
-    let greetings = greetings.lock().unwrap();
-    Ok(warp::reply::json(&*greetings))
-}
-
-async fn handle_post_greeting(
-    new_greeting: Greeting,
-    greetings: Arc<Mutex<Vec<Greeting>>>,
-) -> Result<impl warp::Reply, warp::Rejection> {
-    let mut greetings = greetings.lock().unwrap();
-    greetings.push(new_greeting);
-    Ok(warp::reply::json(&*greetings))
-}
-
-fn with_greetings(
-    greetings: Arc<Mutex<Vec<Greeting>>>,
-) -> impl Filter<Extract = (Arc<Mutex<Vec<Greeting>>>,), Error = std::convert::Infallible> + Clone {
-    warp::any().map(move || greetings.clone())
-}
+mod routes;
+mod store;
+mod types;
 
 #[tokio::main]
 async fn main() {
-    let greetings = Arc::new(Mutex::new(Vec::new()));
+    let store = store::Store::new();
+    let store_filter = warp::any().map(move || store.clone());
 
-    let get_greeting = warp::path!("greeting")
-        .and(warp::get())
-        .and(with_greetings(greetings.clone()))
-        .and_then(handle_get_greeting);
+    let cors = warp::cors()
+        .allow_any_origin()
+        .allow_header("content-type")
+        .allow_methods(&[Method::PUT, Method::DELETE, Method::GET, Method::POST]);
 
-    let post_greeting = warp::path!("greeting")
-        .and(warp::post())
+    let get_questions = warp::get()
+        .and(warp::path("questions"))
+        .and(warp::path::end())
+        .and(warp::query())
+        .and(store_filter.clone())
+        .and_then(routes::question::get_questions);
+
+    let update_question = warp::put()
+        .and(warp::path("questions"))
+        .and(warp::path::param::<String>())
+        .and(warp::path::end())
+        .and(store_filter.clone())
         .and(warp::body::json())
-        .and(with_greetings(greetings.clone()))
-        .and_then(handle_post_greeting);
+        .and_then(routes::question::update_question);
 
-    let routes = get_greeting.or(post_greeting);
+    let delete_question = warp::delete()
+        .and(warp::path("questions"))
+        .and(warp::path::param::<String>())
+        .and(warp::path::end())
+        .and(store_filter.clone())
+        .and_then(routes::question::delete_question);
 
-    println!("Starting server at 127.0.0.1:3030");
+    let add_question = warp::post()
+        .and(warp::path("questions"))
+        .and(warp::path::end())
+        .and(store_filter.clone())
+        .and(warp::body::json())
+        .and_then(routes::question::add_question);
+
+    let add_answer = warp::post()
+        .and(warp::path("comments"))
+        .and(warp::path::end())
+        .and(store_filter.clone())
+        .and(warp::body::form())
+        .and_then(routes::answer::add_answer);
+
+    let routes = get_questions
+        .or(update_question)
+        .or(add_question)
+        .or(add_answer)
+        .or(delete_question)
+        .with(cors)
+        .recover(return_error);
+
+    println!(" start the web app 0.0.0.0:3030");
     warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
-
 }
