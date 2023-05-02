@@ -1,5 +1,5 @@
 [package]
-name = "app1"
+name = "app02"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,3 +10,4 @@ reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1.28.0", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 warp = "0.3.5"
+serde_json = "1.0"
