@@ -17,7 +17,7 @@ async fn main() {
     });
 
     let store =
-        store::Store::new("jdbc:postgresql://10.111.27.56:5432/infra").await;
+        store::Store::new("jdbc:postgresql://127.0.0.1:5432/infra").await;
 
     sqlx::migrate!()
         .run(&store.clone().connection)
