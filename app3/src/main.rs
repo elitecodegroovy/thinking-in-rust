@@ -48,5 +48,5 @@ async fn main() {
     let routes = get_greeting.or(post_greeting);
 
     println!("Starting server at 127.0.0.1:3030");
-    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
+    warp::serve(routes).run(([0, 0, 0,0], 3030)).await;
 }

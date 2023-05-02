@@ -3,15 +3,15 @@ appenders:
   stdout:
     kind: console
     encoder:
-      kind: file
+      kind: json
   file:
     kind: file
     path: "stderr.log"
     encoder:
-      kind: file
+      kind: json
 
 root:
   level: info
-  appenders:
+  appends:
     - stdout
     - file
