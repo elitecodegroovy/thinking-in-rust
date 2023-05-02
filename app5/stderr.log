@@ -1,0 +1,78 @@
+2023-05-02T12:12:53.260968+08:00 - Server::run; addr=127.0.0.1:3030
+2023-05-02T12:12:53.261046+08:00 - listening on http://127.0.0.1:3030
+2023-05-02T12:13:09.975754+08:00 - request; method=GET path=/questions version=HTTP/1.1
+2023-05-02T12:13:09.975839+08:00 - request; remote.addr=127.0.0.1:51593
+2023-05-02T12:13:09.975910+08:00 - processing request
+2023-05-02T12:13:09.976034+08:00 - get_questions request; method=GET path=/questions id=f0afb313-0d3e-4e4f-95af-ef82a05f502e
+2023-05-02T12:13:09.976105+08:00 - processing request
+2023-05-02T12:13:09.976366+08:00 - get_questions; params={} store=Store { questions: RwLock { data: {QuestionId("QI0001"): Question { id: QuestionId("QI0001"), title: "First question ever asked", content: "How does this work?", tags: Some(["general"]) }} }, answers: RwLock { data: {} } }
+2023-05-02T12:13:09.976416+08:00 - querying questions
+2023-05-02T12:13:09.976446+08:00 - pagination=false
+2023-05-02T12:13:09.976609+08:00 - finished processing with success status=200
+2023-05-02T12:13:09.976655+08:00 - finished processing with success status=200
+2023-05-02T13:03:46.397499+08:00 - app booting up 
+2023-05-02T13:03:46.398729+08:00 - Server::run; addr=127.0.0.1:3030
+2023-05-02T13:03:46.398769+08:00 - listening on http://127.0.0.1:3030
+2023-05-02T13:04:08.671227+08:00 - request; method=GET path=/questions version=HTTP/1.1
+2023-05-02T13:04:08.671398+08:00 - request; remote.addr=127.0.0.1:53767
+2023-05-02T13:04:08.671553+08:00 - processing request
+2023-05-02T13:04:08.671723+08:00 - get_questions request; method=GET path=/questions id=db8dcee7-c7bd-41ff-a56a-c417f95ca824
+2023-05-02T13:04:08.671816+08:00 - processing request
+2023-05-02T13:04:08.672188+08:00 - get_questions; params={} store=Store { questions: RwLock { data: {QuestionId("QI0001"): Question { id: QuestionId("QI0001"), title: "First question ever asked", content: "How does this work?", tags: Some(["general"]) }} }, answers: RwLock { data: {} } }
+2023-05-02T13:04:08.674529+08:00 - querying questions
+2023-05-02T13:04:08.674585+08:00 - pagination=false
+2023-05-02T13:04:08.674811+08:00 - finished processing with success status=200
+2023-05-02T13:04:08.674885+08:00 - finished processing with success status=200
+2023-05-02T13:05:00.625259+08:00 - app booting up 
+2023-05-02T13:05:00.626126+08:00 - Server::run; addr=127.0.0.1:3030
+2023-05-02T13:05:00.626150+08:00 - listening on http://127.0.0.1:3030
+2023-05-02T13:05:04.215612+08:00 - get_questions request; method=GET path=/questions id=ca8c9bc8-57cf-4f82-8a68-585e0f21b441
+2023-05-02T13:05:04.215776+08:00 - processing request
+2023-05-02T13:05:04.216105+08:00 - get_questions; params={} store=Store { questions: RwLock { data: {QuestionId("QI0001"): Question { id: QuestionId("QI0001"), title: "First question ever asked", content: "How does this work?", tags: Some(["general"]) }} }, answers: RwLock { data: {} } }
+2023-05-02T13:05:04.216218+08:00 - querying questions
+2023-05-02T13:05:04.216297+08:00 - pagination=false
+2023-05-02T13:05:04.216498+08:00 - finished processing with success status=200
+2023-05-02T13:07:33.057561+08:00 - app booting up 
+2023-05-02T13:07:33.058695+08:00 - Server::run; addr=127.0.0.1:3030
+2023-05-02T13:07:33.058723+08:00 - listening on http://127.0.0.1:3030
+2023-05-02T13:07:37.959965+08:00 - app booting up 
+2023-05-02T13:07:37.961192+08:00 - Server::run; addr=127.0.0.1:3030
+2023-05-02T13:07:37.961225+08:00 - listening on http://127.0.0.1:3030
+2023-05-02T13:07:41.063407+08:00 - get_questions request; method=GET path=/questions id=829198c6-f0a4-4d2b-8ee1-617c925528bf
+2023-05-02T13:07:41.063513+08:00 - processing request
+2023-05-02T13:07:41.063730+08:00 - get_questions; params={} store=Store { questions: RwLock { data: {QuestionId("QI0001"): Question { id: QuestionId("QI0001"), title: "First question ever asked", content: "How does this work?", tags: Some(["general"]) }} }, answers: RwLock { data: {} } }
+2023-05-02T13:07:41.063794+08:00 - querying questions
+2023-05-02T13:07:41.063839+08:00 - pagination=false
+2023-05-02T13:07:41.063964+08:00 - finished processing with success status=200
+2023-05-02T13:08:07.629794+08:00 - app booting up 
+2023-05-02T13:08:07.630777+08:00 - Server::run; addr=127.0.0.1:3030
+2023-05-02T13:08:07.630799+08:00 - listening on http://127.0.0.1:3030
+2023-05-02T13:13:51.346422+08:00 - app booting up 
+2023-05-02T13:13:51.347255+08:00 - Server::run; addr=127.0.0.1:3030
+2023-05-02T13:13:51.347276+08:00 - listening on http://127.0.0.1:3030
+2023-05-02T13:13:54.059979+08:00 - get_questions request; method=GET path=/questions id=c479d97a-1da2-429f-bef6-f7808e825da4
+2023-05-02T13:13:54.060127+08:00 - processing request
+2023-05-02T13:13:54.060473+08:00 - get_questions; params={} store=Store { questions: RwLock { data: {QuestionId("QI0001"): Question { id: QuestionId("QI0001"), title: "First question ever asked", content: "How does this work?", tags: Some(["general"]) }} }, answers: RwLock { data: {} } }
+2023-05-02T13:13:54.060599+08:00 - querying questions
+2023-05-02T13:13:54.060678+08:00 - pagination=false
+2023-05-02T13:13:54.060883+08:00 - finished processing with success status=200
+{"time":"2023-05-02T13:15:51.472435+08:00","message":"app booting up ","module_path":"app5","file":"src/main.rs","line":15,"level":"INFO","target":"app5","thread":"main","thread_id":8647269184,"mdc":{}}
+{"time":"2023-05-02T13:15:51.473990+08:00","message":"Server::run; addr=127.0.0.1:3030","module_path":"warp::server","file":"/Users/superpowerai/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/warp-0.3.5/src/server.rs","line":133,"level":"INFO","target":"warp::server","thread":"main","thread_id":8647269184,"mdc":{}}
+{"time":"2023-05-02T13:15:51.474056+08:00","message":"listening on http://127.0.0.1:3030","module_path":"warp::server","file":"/Users/superpowerai/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/warp-0.3.5/src/server.rs","line":134,"level":"INFO","target":"warp::server","thread":"main","thread_id":8647269184,"mdc":{}}
+{"time":"2023-05-02T13:18:02.948436+08:00","message":"app booting up ","module_path":"app5","file":"src/main.rs","line":15,"level":"INFO","target":"app5","thread":"main","thread_id":8647269184,"mdc":{}}
+{"time":"2023-05-02T13:18:02.949804+08:00","message":"Server::run; addr=127.0.0.1:3030","module_path":"warp::server","file":"/Users/superpowerai/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/warp-0.3.5/src/server.rs","line":133,"level":"INFO","target":"warp::server","thread":"main","thread_id":8647269184,"mdc":{}}
+{"time":"2023-05-02T13:18:02.949909+08:00","message":"listening on http://127.0.0.1:3030","module_path":"warp::server","file":"/Users/superpowerai/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/warp-0.3.5/src/server.rs","line":134,"level":"INFO","target":"warp::server","thread":"main","thread_id":8647269184,"mdc":{}}
+{"time":"2023-05-02T13:18:05.483638+08:00","message":"get_questions request; method=GET path=/questions id=38af035f-f2e7-4e8e-8f72-4ddce58a2c22","module_path":"app5","file":"src/main.rs","line":50,"level":"INFO","target":"app5","thread":"tokio-runtime-worker","thread_id":6184136704,"mdc":{}}
+{"time":"2023-05-02T13:18:05.483789+08:00","message":"processing request","module_path":"warp::filters::trace::internal","file":"/Users/superpowerai/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/warp-0.3.5/src/filters/trace.rs","line":301,"level":"INFO","target":"warp::filters::trace","thread":"tokio-runtime-worker","thread_id":6184136704,"mdc":{}}
+{"time":"2023-05-02T13:18:05.484119+08:00","message":"get_questions; params={} store=Store { questions: RwLock { data: {QuestionId(\"QI0001\"): Question { id: QuestionId(\"QI0001\"), title: \"First question ever asked\", content: \"How does this work?\", tags: Some([\"general\"]) }} }, answers: RwLock { data: {} } }","module_path":"app5::routes::question","file":"src/routes/question.rs","line":11,"level":"INFO","target":"app5::routes::question","thread":"tokio-runtime-worker","thread_id":6184136704,"mdc":{}}
+{"time":"2023-05-02T13:18:05.484242+08:00","message":"querying questions","module_path":"app5::routes::question","file":"src/routes/question.rs","line":16,"level":"INFO","target":"app5::routes::question","thread":"tokio-runtime-worker","thread_id":6184136704,"mdc":{}}
+{"time":"2023-05-02T13:18:05.484350+08:00","message":"pagination=false","module_path":"app5::routes::question","file":"src/routes/question.rs","line":24,"level":"INFO","target":"app5::routes::question","thread":"tokio-runtime-worker","thread_id":6184136704,"mdc":{}}
+{"time":"2023-05-02T13:18:05.484506+08:00","message":"finished processing with success status=200","module_path":"warp::filters::trace::internal","file":"/Users/superpowerai/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/warp-0.3.5/src/filters/trace.rs","line":247,"level":"INFO","target":"warp::filters::trace","thread":"tokio-runtime-worker","thread_id":6184136704,"mdc":{}}
+{"time":"2023-05-02T13:18:05.484735+08:00","message":"GET /questions 200 OK 1.368625ms from 127.0.0.1:53985 with {\"host\": \"127.0.0.1:3030\", \"connection\": \"keep-alive\", \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"112\\\", \\\"Google Chrome\\\";v=\\\"112\\\", \\\"Not:A-Brand\\\";v=\\\"99\\\"\", \"content-type\": \"application/json\", \"cache-control\": \"no-cache\", \"sec-ch-ua-mobile\": \"?0\", \"postman-token\": \"5eaaea37-76a8-57a6-9468-a8ecc42822e6\", \"user-agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36\", \"sec-ch-ua-platform\": \"\\\"macOS\\\"\", \"accept\": \"*/*\", \"sec-fetch-site\": \"none\", \"sec-fetch-mode\": \"cors\", \"sec-fetch-dest\": \"empty\", \"accept-encoding\": \"gzip, deflate, br\", \"accept-language\": \"zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7\"}","module_path":"app5","file":"src/main.rs","line":17,"level":"INFO","target":"app5","thread":"tokio-runtime-worker","thread_id":6184136704,"mdc":{}}
+{"time":"2023-05-02T13:24:32.763884+08:00","message":"get_questions request; method=GET path=/questions id=9683adae-45ec-4d3b-b018-7b61d4c08011","module_path":"app5","file":"src/main.rs","line":50,"level":"INFO","target":"app5","thread":"tokio-runtime-worker","thread_id":6169112576,"mdc":{}}
+{"time":"2023-05-02T13:24:32.764025+08:00","message":"processing request","module_path":"warp::filters::trace::internal","file":"/Users/superpowerai/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/warp-0.3.5/src/filters/trace.rs","line":301,"level":"INFO","target":"warp::filters::trace","thread":"tokio-runtime-worker","thread_id":6169112576,"mdc":{}}
+{"time":"2023-05-02T13:24:32.764220+08:00","message":"get_questions; params={} store=Store { questions: RwLock { data: {QuestionId(\"QI0001\"): Question { id: QuestionId(\"QI0001\"), title: \"First question ever asked\", content: \"How does this work?\", tags: Some([\"general\"]) }} }, answers: RwLock { data: {} } }","module_path":"app5::routes::question","file":"src/routes/question.rs","line":11,"level":"INFO","target":"app5::routes::question","thread":"tokio-runtime-worker","thread_id":6169112576,"mdc":{}}
+{"time":"2023-05-02T13:24:32.764326+08:00","message":"querying questions","module_path":"app5::routes::question","file":"src/routes/question.rs","line":16,"level":"INFO","target":"app5::routes::question","thread":"tokio-runtime-worker","thread_id":6169112576,"mdc":{}}
+{"time":"2023-05-02T13:24:32.764392+08:00","message":"pagination=false","module_path":"app5::routes::question","file":"src/routes/question.rs","line":24,"level":"INFO","target":"app5::routes::question","thread":"tokio-runtime-worker","thread_id":6169112576,"mdc":{}}
+{"time":"2023-05-02T13:24:32.764517+08:00","message":"finished processing with success status=200","module_path":"warp::filters::trace::internal","file":"/Users/superpowerai/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/warp-0.3.5/src/filters/trace.rs","line":247,"level":"INFO","target":"warp::filters::trace","thread":"tokio-runtime-worker","thread_id":6169112576,"mdc":{}}
+{"time":"2023-05-02T13:24:32.764702+08:00","message":"GET /questions 200 OK 1.001792ms from 127.0.0.1:54063 with {\"host\": \"127.0.0.1:3030\", \"connection\": \"keep-alive\", \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"112\\\", \\\"Google Chrome\\\";v=\\\"112\\\", \\\"Not:A-Brand\\\";v=\\\"99\\\"\", \"content-type\": \"application/json\", \"cache-control\": \"no-cache\", \"sec-ch-ua-mobile\": \"?0\", \"postman-token\": \"b1bffdce-2bb3-c67f-47d0-1595078c7ce8\", \"user-agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36\", \"sec-ch-ua-platform\": \"\\\"macOS\\\"\", \"accept\": \"*/*\", \"sec-fetch-site\": \"none\", \"sec-fetch-mode\": \"cors\", \"sec-fetch-dest\": \"empty\", \"accept-encoding\": \"gzip, deflate, br\", \"accept-language\": \"zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7\"}","module_path":"app5","file":"src/main.rs","line":17,"level":"INFO","target":"app5","thread":"tokio-runtime-worker","thread_id":6169112576,"mdc":{}}

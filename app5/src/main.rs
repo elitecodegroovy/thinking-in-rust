@@ -10,18 +10,30 @@ mod types;
 
 #[tokio::main]
 async fn main() {
-    let log_filter = std::env::var("RUST_LOG").unwrap_or_else(|_| "practical_rust_book=info,warp=error".to_owned());
-
+    // let log_filter = std::env::var("RUST_LOG").unwrap_or_else(|_| "practical_rust_book=info,warp=error".to_owned());
+    log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
+    log::info!("app booting up ");
+    let log = warp::log::custom(|info| {
+        log::info!(
+            "{} {} {} {:?} from {} with {:?}",
+            info.method(),
+            info.path(),
+            info.status(),
+            info.elapsed(),
+            info.remote_addr().unwrap(),
+            info.request_headers()
+        );
+    });
     let store = store::Store::new();
     let store_filter = warp::any().map(move || store.clone());
 
-    tracing_subscriber::fmt()
-        // Use the filter we built above to determine which traces to record.
-        .with_env_filter(log_filter)
-        // Record an event when each span closes. This can be used to time our
-        // routes' durations!
-        .with_span_events(FmtSpan::CLOSE)
-        .init();
+    // tracing_subscriber::fmt()
+    //     // Use the filter we built above to determine which traces to record.
+    //     // .with_env_filter(log_filter)
+    //     // Record an event when each span closes. This can be used to time our
+    //     // routes' durations!
+    //     .with_span_events(FmtSpan::CLOSE)
+    //     .init();
 
     let cors = warp::cors()
         .allow_any_origin()
@@ -78,8 +90,8 @@ async fn main() {
         .or(add_answer)
         .or(delete_question)
         .with(cors)
-        .with(warp::trace::request())
+        .with(log)
         .recover(return_error);
 
-    warp::serve(routes).run(([0, 0, 0,0], 3030)).await;
+    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
 }
