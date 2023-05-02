@@ -1,0 +1,22 @@
+[package]
+name = "app6"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+warp = "0.3.5"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.1.1", features = ["full"] }
+# We can omit the version number for local imports
+handle-errors = { path = "handle-errors" }
+log = "0.4"
+env_logger = "0.9"
+log4rs = "1.0"
+uuid = { version = "0.8", features = ["v4"] }
+tracing = { version = "0.1", features = ["log"] }
+tracing-subscriber = "0.2"
+chrono = { version = "0.4.19" , features = ["serde"] }
+diesel = { version = "1.4.5", features = ["postgres","chrono","numeric"] }
+dotenv = "0.15.0"
+sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "migrate", "postgres", "mysql" ] }
