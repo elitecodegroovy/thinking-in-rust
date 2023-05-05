@@ -43,7 +43,9 @@ cargo install sqlx-cli
 ```
 
 
-Once the installation is done, run this command to create the reversible migration files. This will create a migrations folder that contains the up/down migration files in the root directory. init is the name of the “up” and “down” scripts.
+Once the installation is done, run this command to create the reversible migration files. 
+This will create a migrations folder that contains the up/down migration files in the root
+directory. init is the name of the “up” and “down” scripts.
 
 ```shell
 sqlx migrate add -r init
