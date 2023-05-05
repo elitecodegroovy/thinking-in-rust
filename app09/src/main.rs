@@ -22,7 +22,7 @@ async fn main() -> std::io::Result<()> {
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = match PgPoolOptions::new()
-        .max_connections(10)
+        .max_connections(2000)
         .connect(&database_url)
         .await
     {
@@ -54,7 +54,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .wrap(Logger::default())
     })
-    .bind(("127.0.0.1", 8000))?
+    .bind(("0.0.0.0", 3030))?
     .run()
     .await
 }
