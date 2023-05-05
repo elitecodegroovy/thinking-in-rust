@@ -5,11 +5,28 @@ mod schema;
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::{http::header, web, App, HttpServer};
+use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::format::ParseError;
 use dotenv::dotenv;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
 pub struct AppState {
     db: Pool<Postgres>,
+}
+
+#[warn(unused_must_use)]
+fn do_print() -> Result<(), ParseError> {
+    let now: DateTime<Utc> = Utc::now();
+
+    println!("UTC now is: {}", now);
+    println!("UTC now in RFC 2822 is: {}", now.to_rfc2822());
+    println!("UTC now in RFC 3339 is: {}", now.to_rfc3339());
+    println!("UTC now in a custom format is: {}", now.format("%Y-%m-%d %H:%M:%S"));
+
+    let no_timezone = NaiveDateTime::parse_from_str("2023-05-05 23:56:04", "%Y-%m-%d %H:%M:%S")?;
+    println!("{}", no_timezone);
+
+    Ok(())
 }
 
 #[actix_web::main]
@@ -35,8 +52,8 @@ async fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
-
-    println!("🚀 Server started successfully");
+    do_print();
+    println!("🚀 Server started successfully ");
 
     HttpServer::new(move || {
         let cors = Cors::default()
