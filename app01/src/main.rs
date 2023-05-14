@@ -787,10 +787,14 @@ fn do_print() {
 }
 
 fn entry_point() {
-    do_print()
+    do_print();
+    for _ in 0..10 {
+        println!("uuid: {}", Uuid::new_v4().hyphenated().to_string().replace("-", ""));
+    }
 }
 
 use std::io::{Error, ErrorKind};
+use uuid::Uuid;
 use warp::Filter;
 
 #[tokio::main]
