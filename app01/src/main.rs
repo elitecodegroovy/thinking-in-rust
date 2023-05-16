@@ -791,7 +791,91 @@ fn entry_point() {
     for _ in 0..10 {
         println!("uuid: {}", Uuid::new_v4().hyphenated().to_string().replace("-", ""));
     }
+    define_macro()
 }
+
+macro_rules! say_hello {
+    // `()` indicates that the macro takes no argument.
+    () => {
+        // The macro will expand into the contents of this block.
+        println!("This is a macro definition say_hello!");
+    };
+}
+
+macro_rules! create_function {
+    // This macro takes an argument of designator `ident` and
+    // creates a function named `$func_name`.
+    // The `ident` designator is used for variable/function names.
+    ($func_name:ident) => {
+        fn $func_name() {
+            // The `stringify!` macro converts an `ident` into a string.
+            println!("You called {:?}()",
+                     stringify!($func_name));
+        }
+    };
+}
+
+// Create functions named `foo` and `bar` with the above macro.
+create_function!(foo);
+create_function!(bar);
+
+macro_rules! print_result {
+    // This macro takes an expression of type `expr` and prints
+    // it as a string along with its result.
+    // The `expr` designator is used for expressions.
+    ($expression:expr) => {
+        // `stringify!` will convert the expression *as it is* into a string.
+        println!("{:?} = {:?}",
+                 stringify!($expression),
+                 $expression);
+    };
+}
+
+// `find_min!` will calculate the minimum of any number of arguments.
+macro_rules! find_min {
+    // Base case:
+    ($x:expr) => ($x);
+    // `$x` followed by at least one `$y,`
+    ($x:expr, $($y:expr),+) => (
+        // Call `find_min!` on the tail `$y`
+        std::cmp::min($x, find_min!($($y),+))
+    )
+}
+
+#[cfg(panic = "unwind")]
+fn ah(){ println!("Spit it out!!!!");}
+
+#[cfg(not(panic="unwind"))]
+fn ah(){ println!("This is not your party. Run!!!!");}
+
+fn drink(beverage: &str){
+    if beverage == "lemonade"{ ah();}
+    else{println!("Some refreshing {} is all I need.", beverage);}
+}
+
+fn define_macro() {
+    say_hello!();
+    foo();
+    bar();
+
+    print_result!(1u32 + 1);
+
+    // Recall that blocks are expressions too!
+    print_result!({
+        let x = 1u32;
+
+        x * x + 2 * x - 1
+    });
+    println!("{}", find_min!(1));
+    println!("{}", find_min!(1 + 2, 2));
+    println!("{}", find_min!(5, 2 * 3, 4));
+
+    drink("water");
+    drink("lemonade");
+    // rustc  lemonade.rs -C panic=abort
+}
+
+
 
 use std::io::{Error, ErrorKind};
 use uuid::Uuid;
