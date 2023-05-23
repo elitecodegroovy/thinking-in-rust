@@ -264,6 +264,49 @@ fn do_str() {
 
     // Unwrapping a `None` variant will `panic!`
     // println!("{:?} unwraps to {:?}", none, none.unwrap());
+
+    fn call( number: &str) -> &str {
+        match number {
+            "15914300000" => " Chine mobile",
+            "13914300000" => " Chine union mobile",
+            _ => "nothing match..."
+        }
+    }
+
+    use std::collections::HashMap;
+    let mut contacts = HashMap::new();
+
+    contacts.insert("Daniel", "798-1364");
+    contacts.insert("Ashley", "645-7689");
+    contacts.insert("Katie", "435-8291");
+    contacts.insert("Robert", "956-1745");
+
+    // Takes a reference and returns Option<&V>
+    match contacts.get(&"Daniel") {
+        Some(&number) => println!("Calling Daniel: {}", call(number)),
+        _ => println!("Don't have Daniel's number."),
+    }
+
+    // `HashMap::insert()` returns `None`
+    // if the inserted value is new, `Some(value)` otherwise
+    contacts.insert("Daniel", "164-6743");
+
+    match contacts.get(&"Ashley") {
+        Some(&number) => println!("Calling Ashley: {}", call(number)),
+        _ => println!("Don't have Ashley's number."),
+    }
+
+    println!(" before: {}", contacts.len());
+    contacts.remove(&"Ashley");
+    println!(" after: {}", contacts.len());
+
+
+
+    // `HashMap::iter()` returns an iterator that yields
+    // (&'a key, &'a value) pairs in arbitrary order.
+    for (contact, &number) in contacts.iter() {
+        println!("Calling {}: {}", contact, call(number));
+    }
 }
 
 #[tokio::main]
