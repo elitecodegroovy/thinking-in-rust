@@ -290,6 +290,7 @@ fn do_str() {
     // `HashMap::insert()` returns `None`
     // if the inserted value is new, `Some(value)` otherwise
     contacts.insert("Daniel", "164-6743");
+    contacts.insert("John Lua", "159143222");
 
     match contacts.get(&"Ashley") {
         Some(&number) => println!("Calling Ashley: {}", call(number)),
@@ -307,6 +308,151 @@ fn do_str() {
     for (contact, &number) in contacts.iter() {
         println!("Calling {}: {}", contact, call(number));
     }
+
+    let mut car_name_hash = HashMap::new();
+    car_name_hash.insert("Tesla".to_string(), "Model Y".to_string());
+    car_name_hash.insert("BYD".to_string(), "yang wang 8".to_string());
+    // Check for a specific one.
+    // When collections store owned values (String), they can still be
+    // queried using references (&str).
+    if car_name_hash.contains_key("BYD") {
+        println!("I have the car , car name size : {}.",
+                 car_name_hash.len());
+    }
+
+    let car_name_key = ["Tesla", "Xiao Peng"];
+    for &car in &car_name_key {
+        match car_name_hash.get(car) {
+            Some(value) => println!("car: {}", value),
+            None => print!("None")
+        }
+    }
+
+    // Look up the value for a key (will panic if the key is not found).
+    // println!("Car: {}", car_name_hash["Xiao Peng"]);
+    car_name_hash.entry("Xiao Peng".to_string()).or_insert("P8".to_string());
+
+    for (car_inc, car_name) in car_name_hash.iter() {
+        println!("car inc. {}:  car name: {}", car_inc, car_name);
+    }
+
+    for key in car_name_hash.keys() {
+        println!("key. {}:  value: {}", key, car_name_hash[key]);
+    }
+
+    car_name_hash.insert("1".to_string(), String::from("Mango"));
+    car_name_hash.remove(&"1".to_string());
+    for val in car_name_hash.values() {
+        println!("{val}");
+    }
+
+    #[derive(Hash, Eq, PartialEq, Debug)]
+    struct Viking {
+        name: String,
+        country: String,
+    }
+
+    impl Viking {
+        /// Creates a new Viking.
+        fn new(name: &str, country: &str) -> Viking {
+            Viking { name: name.to_string(), country: country.to_string() }
+        }
+    }
+
+// Use a HashMap to store the vikings' health points.
+    let vikings = HashMap::from([
+        (Viking::new("Einar", "Norway"), 25),
+        (Viking::new("Olaf", "Denmark"), 24),
+        (Viking::new("Harald", "Iceland"), 12),
+    ]);
+
+    do_hash_set()
+}
+
+fn do_hash_set() {
+    use std::collections::HashSet;
+    let numbers = HashSet::from([2, 7, 8, 10]);
+
+    println!("numbers = {:?}", numbers);
+
+    let mut car_names: HashSet<&str> = HashSet::new();
+
+    car_names.insert("Ben");
+    car_names.insert("BYD");
+    car_names.insert("XiaoPeng");
+
+    println!("car_names before remove operation = {:?}", car_names);
+
+    // remove value from a HashSet
+    car_names.remove("XiaoPeng");
+
+    println!("car_names after remove operation = {:?}", car_names);
+    let numbers = [1, 2, 4, 555, 1];
+
+    let iter = numbers.iter();
+    for number in iter {
+        println!(" {number}")
+    }
+
+    do_inter1();
+    do_inter2();
+    do_inter3();
+}
+
+fn do_inter3() {
+    let colors = vec!["Red", "Yellow", "Green"];
+
+    // using iter() to iterate through a collection
+    for color in colors.iter() {
+        // reference to the items in the iterator
+        println!("{}", color);
+    }
+
+    // the collection is untouched and still available here
+    println!("colors = {:?}", colors);
+
+    let numbers: Vec<i32> = vec![1, 2, 3];
+
+    // using the map iterator adapter
+    let even_numbers: Vec<i32> = numbers.iter().map(|i| i * i).collect();
+
+    println!("numbers = {:?}", numbers);
+    println!("even_numbers = {:?}", even_numbers);
+
+    // looping through a range
+    for i in 1..3 {
+        println!("{}", i);
+    }
+}
+
+fn do_inter2() {
+    let colors = vec!["Red", "Yellow", "Green"];
+
+    // using into_iter() to iterate through a collection
+    for color in colors.into_iter() {
+        // the items in the collection move into this scope
+        println!("{}", color);
+    }
+    // end of scope of for loop
+
+    // error
+    // the collection is not available here as the for loop scope ends above
+    // println!("colors = {:?}", colors);
+
+}
+
+fn do_inter1() {
+    let mut colors = vec!["Red", "Yellow", "Green"];
+
+    // using iter_mut() to iterate through a collection
+    for color in colors.iter_mut() {
+        // modify the item in the collection
+        *color = "Black";
+        println!("{}", color);
+    }
+
+    // the modified collection is available here
+    println!("colors = {:?}", colors);
 }
 
 #[tokio::main]

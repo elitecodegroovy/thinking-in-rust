@@ -175,3 +175,15 @@ fn main() {
     }
 }
 ```
+
+
+## Stack VS Heap
+
+Stack: Accessing data in the stack is faster. 	
+    Heap: Accessing data in a heap is slower.
+Stack: Managing memory in the stack is predictable and trivial.	
+    Heap:  Managing memory for the heap (arbitrary size) is non-trivial.
+Stack: Rust stack allocates by default.	
+    Heap: Box is used to allocate to the heap.
+Stack:  Primitive types and local variables of a function are allocated on the stack.	
+    Heap:  Data types that are dynamic in size, such as String, Vector, Box, etc., are allocated on the heap.
