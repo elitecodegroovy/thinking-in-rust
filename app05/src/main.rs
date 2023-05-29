@@ -423,6 +423,126 @@ fn do_inter3() {
     for i in 1..3 {
         println!("{}", i);
     }
+
+    #[derive(Debug)]
+    enum MathError {
+        DivisionByZero,
+        NonPositiveLogarithm,
+        NegativeSquareRoot,
+    }
+
+    type MathResult = Result<f64, MathError>;
+
+    fn div(x: f64, y: f64) -> MathResult {
+        if y == 0.0 {
+            Err(MathError::DivisionByZero)
+        } else {
+            Ok(x / y)
+        }
+    }
+
+    fn sqrt(x: f64) -> MathResult {
+        if x < 0.0 {
+            Err(MathError::NegativeSquareRoot)
+        } else {
+            Ok(x.sqrt())
+        }
+    }
+
+    fn ln(x: f64) -> MathResult {
+        if x <= 0.0 {
+            Err(MathError::NonPositiveLogarithm)
+        } else {
+            Ok(x.ln())
+        }
+    }
+
+    // Intermediate function
+    fn op_(x: f64, y: f64) -> MathResult {
+        // if `div` "fails", then `DivisionByZero` will be `return`ed
+        let ratio = div(x, y)?;
+
+        // if `ln` "fails", then `NonPositiveLogarithm` will be `return`ed
+        let ln = ln(ratio)?;
+
+        sqrt(ln)
+    }
+
+    fn op(x: f64, y: f64) {
+        match op_(x, y) {
+            Err(why) => println!("{}", match why {
+                MathError::NonPositiveLogarithm
+                => "logarithm of non-positive number",
+                MathError::DivisionByZero
+                => "division by zero",
+                MathError::NegativeSquareRoot
+                => "square root of negative number",
+            }),
+            Ok(value) => println!("{}", value),
+        }
+    }
+
+    op(1000.0, 10.0);
+    do_rc();
+    do_thread();
+}
+
+fn do_thread() {
+    use std::thread;
+
+    const NTHREADS: u32 = 10;
+
+    // Make a vector to hold the children which are spawned.
+    let mut children = vec![];
+
+    for i in 0..NTHREADS {
+        // Spin up another thread
+        children.push(thread::spawn(move || {
+            println!("this is thread number {}", i);
+        }));
+    }
+
+    for child in children {
+        // Wait for the thread to finish. Returns a result.
+        let _ = child.join();
+    }
+}
+
+fn do_rc() {
+    use std::rc::Rc;
+    let rc_examples = "Rc examples".to_string();
+    {
+        println!("--- rc_a is created ---");
+
+        let rc_a: Rc<String> = Rc::new(rc_examples);
+        println!("Reference Count of rc_a: {}", Rc::strong_count(&rc_a));
+
+        {
+            println!("--- rc_a is cloned to rc_b ---");
+
+            let rc_b: Rc<String> = Rc::clone(&rc_a);
+            println!("Reference Count of rc_b: {}", Rc::strong_count(&rc_b));
+            println!("Reference Count of rc_a: {}", Rc::strong_count(&rc_a));
+
+            // Two `Rc`s are equal if their inner values are equal
+            println!("rc_a and rc_b are equal: {}", rc_a.eq(&rc_b));
+
+            // We can use methods of a value directly
+            println!("Length of the value inside rc_a: {}", rc_a.len());
+            println!("Value of rc_b: {}", rc_b);
+
+            println!("--- rc_b is dropped out of scope ---");
+        }
+
+        println!("Reference Count of rc_a: {}", Rc::strong_count(&rc_a));
+
+        println!("--- rc_a is dropped out of scope ---");
+    }
+
+    // Error! `rc_examples` already moved into `rc_a`
+    // And when `rc_a` is dropped, `rc_examples` is dropped together
+    // println!("rc_examples: {}", rc_examples);
+    // TODO ^ Try uncommenting this line
 }
 
 fn do_inter2() {
