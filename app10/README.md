@@ -56,3 +56,13 @@ The admin only endpoint can be accessed here:
 ```bash
 curl -X GET 'localhost:5000/admin_only' -H 'Authorization: Bearer <token string here>'
 ```
+
+## Deployment 
+
+### compilation
+
+production:
+
+``` 
+cargo build --release
+```
