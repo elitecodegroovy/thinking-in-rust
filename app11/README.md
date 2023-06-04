@@ -31,3 +31,6 @@ tool will check dependencies against the RustSec Advisory Database
 ```
 cargo audit
 ```
+
+
+https://course.rs/about-book.html
