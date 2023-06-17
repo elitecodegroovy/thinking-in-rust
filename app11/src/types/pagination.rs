@@ -21,7 +21,7 @@ pub struct Pagination {
 /// # Example usage
 /// ```rust
 /// use std::collections::HashMap;
-/// use rust_web_dev::types::pagination::extract_pagination;
+/// use app11::types::pagination::extract_pagination;
 /// 
 /// let mut query = HashMap::new();
 /// query.insert("limit".to_string(), "1".to_string());

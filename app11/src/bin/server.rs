@@ -1,5 +1,5 @@
-use rust_web_dev::config;
-use rust_web_dev::{run, setup_store};
+use app11::config;
+use app11::{run, setup_store};
 
 #[tokio::main]
 async fn main() -> Result<(), handle_errors::Error> {
