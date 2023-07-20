@@ -9,6 +9,7 @@ keywords = ["simple", "http", "server", "static", "file"]
 repository = "https://github.com/TheWaWaR/simple-http-server"
 edition = "2018"
 
+
 [dependencies]
 clap = "2.33.0"
 termcolor = "1.0.5"
