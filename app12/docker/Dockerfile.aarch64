@@ -2,6 +2,7 @@
 # LICENS: BSD 2-Clause "Simplified" License
 #    please see https://github.com/k4yt3x/simple-http-server/blob/master/LICENSE for more details
 
+
 FROM rust:1.61-alpine3.15 as builder
 # branch name or tag
 ARG BRANCH
