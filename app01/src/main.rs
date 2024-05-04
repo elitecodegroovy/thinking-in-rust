@@ -4,6 +4,12 @@ use std::collections::HashMap;
 use std::fmt; // Import the `fmt` module.
 use std::io;
 use std::str::FromStr;
+
+mod file;
+
+const MAX_REQUEST: u32 = 2_000_000;
+
+
 #[derive(Debug)]
 struct Person<'a> {
     name: &'a str,
@@ -90,7 +96,6 @@ impl fmt::Display for Circle {
     }
 }
 
-mod file;
 
 #[cfg(target_os = "linux")]
 fn are_you_on_linux() {
@@ -131,9 +136,11 @@ fn do_mod() {
     file::index::function();
     file::indirect_access();
     file::function();
+
     function();
     file::inaccessible_fn();
 }
+
 fn do_HOF() {
     println!("Find the sum of all the squared odd numbers under 1000");
     let upper = 1000;
@@ -791,7 +798,112 @@ fn exec_variable() {
     println!("init ticket count: {}", ticket); // 打印操作
     ticket += 1;  // 逻辑增加1
     println!("update ticket count: {}", ticket); // 打印操作
+
+    println!("max request :{}, PI: {}", MAX_REQUEST, std::f64::consts::PI);
+
+    let sentence = "ultimately contributing to the creation of more reliable and maintainable code!";
+    let transformed_sentence: String = sentence.chars().map(|c|
+        c.to_ascii_uppercase()).collect();
+    println!("Transformed: {}", transformed_sentence);
+
+    fn calculate_length(s: &String) -> usize { // ②
+        s.len()
+    }
+
+    let s1 = String::from("A simple borrowing");
+    let len = calculate_length(&s1); // ①
+    println!("Length of ‘{}’: {}", s1, len);
+
+    let mut numbers = [1, 2, 3, 4, 5];
+    for num in numbers.iter_mut() { // ①
+        *num *= 2;
+    }
+    println!(">>>member: {:?}", numbers);
+
+    let mut unsorted = [4, 1, 7, 3, 9];
+    unsorted.sort();
+    println!(">>>unsorted: {:?}", unsorted); // ①
+
+    let original = [1, 2, 3, 4, 5];
+
+    let mut squared: [i32; 5] = [0; 5]; // Initialize an array of size 5 with zeros
+    let _ = original
+        .iter()
+        .enumerate()
+        .map(|(index, &value)| squared[index] = value * value)
+        .collect::<Vec<_>>();
+    println!(">>>squared {:?}", squared);
+
+    // clone array
+    let original = ["one", "two", "three"];
+    let cloned = original.to_owned();
+    println!(">>>cloned{:?}", cloned);
+
+    let mut numbers = vec![10, 11, 12, 13, 14, 15]; // ①
+    for number in numbers.iter_mut() { // ②
+        *number += 1; // Add 1 to each element
+    }
+    println!("{:?}", numbers);
+
+    let fruits = vec!["one", "two", "three"];
+    for (index, fruit) in fruits.iter().enumerate() { // ②
+        println!("Index {}: {}", index, fruit);
+    }
+
+    // tuple
+    let person = ("Alice", 30, true); // ①
+    // Accessing the first element of the tuple
+    let name = person.0; // ②
+    // Accessing the second element
+    let age = person.1; // ③
+    // Accessing the third element
+    let employed = person.2; // ④
+    println!("{:?} {:?}, {:?}", name, age, employed);
+
+    let person = ("LJG", 30, true); // ①
+// Using a tuple pattern to match and destructure
+    match person {
+        (name, age, true) => println!("{} is {} years old and employed.", name, age),
+        (name, age, false) => println!("{} is {} years old and not employed.", name, age),
+        _ => println!("Unknown employment status."), // ②
+    }
+
+    fn tokenize_sentence(sentence: &str) -> Vec<&str> {
+        sentence.split_whitespace().collect()
+    }
+    let text: &str = "Rust is a systems programming language.";
+    let words = tokenize_sentence(text);
+    println!("Words: {:?}", words);
+
+
+    // let my_vector = vec![1, 2, 3, 1,4,4];
+    // let my_set: HashSet<i32> = my_vector.into_iter().collect(); //②
+    // let a = HashSet::from([1, 2, 3]);
+    let mut numbers = vec![1, 2, 3, 4, 5];
+    let mut_ptr = numbers.as_mut_ptr(); // ①
+    let len = numbers.len();
+    unsafe { // ②
+        for i in 0..len {
+            let current_value = *mut_ptr.add(i); // ③
+            *mut_ptr.add(i) = current_value * 2; // ④
+        }
+    }
+
+    println!(">>>unsafe block >>> {:?}", numbers);
+
+
+    let result;
+    {
+        let s = String::from("Rust");
+        result = get_length(&s); // ①
+    } // ②
+    println!("Length: {}", result);
 }
+
+fn get_length(s: &String) -> usize {
+    s.len()
+}
+use std::collections::HashSet;
 fn entry_point() {
     exec_variable();
     do_print();

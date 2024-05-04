@@ -41,6 +41,42 @@ fn compare_types<T: Debug, U: Debug>(t: &T, u: &U) {
     println!("t: `{:?}`", t);
     println!("u: `{:?}`", u);
 }
+
+use serde::{Deserialize, Serialize};
+use serde_json::Result;
+
+#[derive(Serialize, Deserialize)]
+struct PersonJ {
+    name: String,
+    age: u8,
+    phones: Vec<String>,
+}
+
+fn ss() {
+
+    // Some JSON input data as a &str. Maybe this comes from the user.
+    let data = r#"
+        {
+            "name": "刘德华",
+            "age": 55,
+            "phones": [
+                "+44 1234567",
+                "+44 2345678"
+            ]
+        }"#;
+
+    // Parse the string of data into a Person object. This is exactly the
+    // same function as the one that produced serde_json::Value above, but
+    // now we are asking it for a Person as output.
+    let p: PersonJ = serde_json::from_str(data).unwrap();
+
+    // Do things just like with any other Rust data structure.
+    println!("Please call {} at the number {}", p.name, p.phones[0]);
+
+    let p_obj: String = serde_json::to_string(&p).unwrap();
+    println!("person object {}", p_obj);
+}
+
 #[allow(dead_code)]
 pub fn function() {
     println!("called `file::index::function()`");
@@ -82,6 +118,8 @@ pub fn function() {
     println!("Last number: {}", container.last());
 
     println!("The difference is: {}", difference(&container));
+
+    ss()
 }
 struct Container(i32, i32);
 
@@ -114,8 +152,7 @@ impl Contains<i32, i32> for Container {
 // `B` again is a nuisance.
 fn difference<A, B, C>(container: &C) -> i32
 where
-    C: Contains<A, B>,
-{
+    C: Contains<A, B>, {
     container.last() - container.first()
 }
 
