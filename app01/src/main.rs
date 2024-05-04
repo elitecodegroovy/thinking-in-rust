@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 
 use std::collections::HashMap;
-use std::fmt; // Import the `fmt` module.
+use std::{fmt, thread};
+use std::cell::RefCell; // Import the `fmt` module.
 use std::io;
 use std::str::FromStr;
 
@@ -891,19 +892,196 @@ fn exec_variable() {
 
     println!(">>>unsafe block >>> {:?}", numbers);
 
-
+    // Lifetimes in Rust
     let result;
     {
         let s = String::from("Rust");
         result = get_length(&s); // ①
     } // ②
     println!("Length: {}", result);
+    // ① Pass a reference to s.
+    // ② s goes out of scope, but the reference’s lifetime is still
+    // valid.
+    do_in_box();
+    do_in_Rc();
+    do_in_Arc();
+    do_in_RefCell();
+    do_in_mutex();
+    do_in_atomic();
+}
+use std::sync::{Mutex};
+use std::time::Duration;
+struct Bank {
+    accounts: Mutex<HashMap<String, f64>>,
+}
+impl Bank {
+    fn new() -> Self {
+        Bank {
+            accounts: Mutex::new(HashMap::new()),
+        }
+    }
+    fn deposit(&self, account: &str, amount: f64) {
+        let mut accounts = self.accounts.lock().unwrap();
+        let balance =
+            accounts.entry(account.to_string()).or_insert(0.0);
+        *balance += amount;
+    }
+    fn withdraw(&self, account: &str, amount: f64) {
+        let mut accounts = self.accounts.lock().unwrap();
+        let balance =
+            accounts.entry(account.to_string()).or_insert(0.0);
+        if *balance >= amount {
+            *balance -= amount;
+        } else {
+            println!("Insufficient funds for account: {}", account);
+        }
+    }
+    fn check_balance(&self, account: &str) -> f64 {
+        let accounts = self.accounts.lock().unwrap();
+        *accounts.get(account).unwrap_or(&0.0)
+    }
+}
+
+fn do_in_atomic() {
+    use std::sync::atomic::{AtomicBool, Ordering};
+    let atomic_flag = Arc::new(AtomicBool::new(false)); // ①
+    let atomic_flag_clone = Arc::clone(&atomic_flag); // ②
+    let thread_handle = thread::spawn(move || { // ③
+        thread::sleep(std::time::Duration::from_secs(1));
+        atomic_flag_clone.store(true, Ordering::Relaxed);
+    });
+    while !atomic_flag.load(Ordering::Relaxed) { // ④
+
+    }
+    thread_handle.join().unwrap();
+    println!("Atomic flag is set to true.");
+}
+fn do_in_mutex() {
+    let bank = Arc::new(Bank::new());
+    let mut handles = vec![];
+    for i in 0..5 {
+        let bank_clone = Arc::clone(&bank);
+        let handle = thread::spawn(move || {
+            let account = format!("Account{}", i);
+            bank_clone.deposit(&account, 100.0);
+            thread::sleep(Duration::from_millis(100)); // Simulate
+            bank_clone.withdraw(&account, 30.0);
+            let balance = bank_clone.check_balance(&account);
+            println!("{} - Balance: {:.2}", account, balance);
+        });
+        handles.push(handle);
+    }
+    for handle in handles {
+        handle.join().unwrap();
+    }
+}
+fn do_in_RefCell() {
+    let data = RefCell::new(vec![1, 2, 3]);
+    let data_ref = data.borrow(); // ①
+// data_ref.push(4); // ②
+    drop(data_ref); // ③
+    let mut data_ref_mut = data.borrow_mut(); // ④
+    data_ref_mut.push(4); // ⑤
+    println!("Modified Data: {:?}", *data_ref_mut); //
+}
+fn do_in_Arc() {
+    let data = Arc::new(vec![1, 2, 3, 4, 5]); // ①
+    let clone1 = Arc::clone(&data); // ②
+    let clone2 = Arc::clone(&data); // ②
+    let handle1 = thread::spawn(move || { // ③
+        let sum: i32 = clone1.iter().sum();
+        println!("Thread 1 - Sum of Data: {}", sum);
+    });
+    let handle2 = thread::spawn(move || { // ③
+        let product: i32 = clone2.iter().product();
+        println!("Thread 2 - Product of Data: {}", product);
+    });
+    handle1.join().unwrap();
+    handle2.join().unwrap();
+}
+fn do_in_Rc() {
+    let data = Rc::new(vec![1, 2, 3, 4, 5]); // ①
+    let clone1 = Rc::clone(&data); // ②
+    let clone2 = Rc::clone(&data); // ②
+    let sum: i32 = data.iter().sum(); // ③
+    println!("Data: {:?}", data);
+    println!("Clone1: {:?}", clone1);
+    println!("Clone2: {:?}", clone2);
+
+}
+
+fn do_in_box() {
+    let complex_data = Box::new(vec![1, 2, 3, 4, 5]); // ①
+    let sum: i32 = complex_data.iter().sum(); // ②
+    println!("The sum of the vector {} which is defined by Box::new", sum); // ③
+
+    #[allow(dead_code)]
+    #[derive(Debug, Clone, Copy)]
+    struct Point {
+        x: f64,
+        y: f64,
+    }
+
+    // A Rectangle can be specified by where its top left and bottom right
+// corners are in space
+    #[allow(dead_code)]
+    struct Rectangle {
+        top_left: Point,
+        bottom_right: Point,
+    }
+
+    fn origin() -> Point {
+        Point { x: 0.0, y: 0.0 }
+    }
+
+    fn boxed_origin() -> Box<Point> {
+        // Allocate this point on the heap, and return a pointer to it
+        Box::new(Point { x: 0.0, y: 0.0 })
+    }
+    // (all the type annotations are superfluous)
+    // Stack allocated variables
+    let point: Point = origin();
+    let rectangle: Rectangle = Rectangle {
+        top_left: origin(),
+        bottom_right: Point { x: 3.0, y: -4.0 }
+    };
+
+    // Heap allocated rectangle
+    let boxed_rectangle: Box<Rectangle> = Box::new(Rectangle {
+        top_left: origin(),
+        bottom_right: Point { x: 3.0, y: -4.0 },
+    });
+
+    // The output of functions can be boxed
+    let boxed_point: Box<Point> = Box::new(origin());
+
+    // Double indirection
+    let box_in_a_box: Box<Box<Point>> = Box::new(boxed_origin());
+
+    println!("Point occupies {} bytes on the stack",
+             mem::size_of_val(&point));
+    println!("Rectangle occupies {} bytes on the stack",
+             mem::size_of_val(&rectangle));
+
+    // box size == pointer size
+    println!("Boxed point occupies {} bytes on the stack",
+             mem::size_of_val(&boxed_point));
+    println!("Boxed rectangle occupies {} bytes on the stack",
+             mem::size_of_val(&boxed_rectangle));
+    println!("Boxed box occupies {} bytes on the stack",
+             mem::size_of_val(&box_in_a_box));
+
+    // Copy the data contained in `boxed_point` into `unboxed_point`
+    let unboxed_point: Point = *boxed_point;
+    println!("Unboxed point occupies {} bytes on the stack",
+             mem::size_of_val(&unboxed_point));
 }
 
 fn get_length(s: &String) -> usize {
     s.len()
 }
 use std::collections::HashSet;
+use std::mem;
 fn entry_point() {
     exec_variable();
     do_print();
@@ -1033,6 +1211,8 @@ fn define_macro() {
 
 
 use std::io::{Error, ErrorKind};
+use std::rc::Rc;
+use std::sync::Arc;
 use uuid::Uuid;
 use warp::Filter;
 
