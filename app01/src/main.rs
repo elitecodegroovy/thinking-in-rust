@@ -186,6 +186,7 @@ fn do_HOF() {
 
     do_mod();
 }
+
 fn do_output_fn() {
     fn create_fn() -> impl Fn() {
         let text = "Fn".to_owned();
@@ -253,9 +254,9 @@ fn do_output_fn() {
 fn input_param_closure() {
     // <F> denotes that F is a "Generic type parameter"
     fn apply<F>(f: F)
-    where
+        where
         // The closure takes no input and returns nothing.
-        F: FnOnce(),
+            F: FnOnce(),
     {
         // ^ TODO: Try changing this to `Fn` or `FnMut`.
 
@@ -264,9 +265,9 @@ fn input_param_closure() {
 
     // A function which takes a closure and returns an `i32`.
     fn apply_to_3<F>(f: F) -> i32
-    where
+        where
         // The closure takes an `i32` and returns an `i32`.
-        F: Fn(i32) -> i32,
+            F: Fn(i32) -> i32,
     {
         f(3)
     }
@@ -304,6 +305,7 @@ fn input_param_closure() {
 
     do_output_fn();
 }
+
 fn do_closure() {
     use std::mem;
 
@@ -513,7 +515,7 @@ fn do_print() {
 
     // To create one element tuples, the comma is required to tell them apart
     // from a literal surrounded by parentheses.
-    println!("One element tuple: {:?}", (5u32,));
+    println!("One element tuple: {:?}", (5u32, ));
     println!("Just an integer: {:?}", (5u32));
 
     // Tuples can be destructured to create bindings.
@@ -908,12 +910,156 @@ fn exec_variable() {
     do_in_RefCell();
     do_in_mutex();
     do_in_atomic();
+
+    // file operation
+    do_in_file();
+    // closure and borrow
+    do_closure_and_fn();
+    do_closure_and_fn_mut();
+    do_closure_and_fn_once();
+
+    do_fold();
+    do_chain();
+    do_text_analysis();
 }
+
+fn do_text_analysis() {
+    let text = "Rust is a language that makes it easy to learn Rust and Rust programming is fun when you learn Rust"; // ①
+    let word_freq: HashMap<String, u32> = text // ②
+        .split_whitespace() // ③
+        .map(|word| word.to_lowercase()) // ④
+        .filter(|word| !word.is_empty()) // ⑤
+        .fold(HashMap::new(), |mut map, word| { // ⑥
+            *map.entry(word.to_string()).or_insert(0) += 1;
+            map
+        });
+    println!("Word Frequencies: {:?}", word_freq); // ⑦
+}
+
+fn do_chain() {
+    let numbers1 = vec![1, 2, 3]; // ①
+    let numbers2 = vec![4, 5, 6]; // ①
+    let combined: Vec<i32> = numbers1 // ②
+        .iter()
+        .chain(numbers2.iter())
+        .map(|x| x * 2) // ③
+        .collect(); // ④
+    println!("Combined and doubled: {:?}", combined); // ⑤
+}
+
+fn do_fold() {
+    let numbers = vec![1, 2, 3, 4, 5]; // ①
+    let sum: i32 = numbers.iter().fold(0, |acc, x| acc + x); // ②
+    println!("fold >>> Sum: {}", sum); // ③
+}
+
+fn do_closure_and_fn_once() {
+    let message = "Hi, Rust!".to_string(); // ①
+    let greet = || { // ②
+        let message = message;
+        println!(">>>closure message : {}", message);
+    };
+    greet(); // ③
+    // greet(); // However, if we attempt to call the closure a second time by uncommenting the
+    // line greet();, we encounter a compilation error. This error is due to the fact that
+    // message has already been moved into the closure, and it’s no longer accessible in
+    // the outer scope.
+}
+
+fn do_closure_and_fn_mut() {
+    let mut counter = 0; // ①
+    let mut increment = || { // ②
+        counter += 1; // ③
+        println!(">>>Counter: {}", counter); // ④
+    };
+    increment(); // ⑤
+    increment(); // ⑥
+}
+
+fn do_closure_and_fn() {
+    let counter = 0; // ①
+    let print_counter = || { // ②
+        println!(">>>fn : Counter: {}", counter); // ③
+    };
+    print_counter(); // ④
+// counter += 1; // ⑤
+}
+
+fn do_in_file() -> Result<(), std::io::Error> {
+    // create a directory
+    fs::create_dir("r_dir")?;
+    fs::remove_dir("r_dir")?;
+
+    let mut file = File::create("new_file.txt")?;
+    file.write_all(b"Hello, Rust!")?;
+    // The ‘file’ variable goes out of scope here, and the file is automatically closed.
+    // move file name
+    let current_local: DateTime<Local> = Local::now();
+    let custom_format = current_local.format("%Y-%m-%d %H:%M:%S");
+    // println!("{}", custom_format); // Outputs: 2023-10-03 16:41:00
+    let new_file_name = Box::new(format!("new_file{}.txt", custom_format));
+    // let clone_file_name = Rc::clone(new_file_name);
+    fs::rename("new_file.txt", new_file_name.to_string())?;
+
+    // Attempt to open a file for reading.
+    let mut read_file = File::open(new_file_name.to_string())?;
+// Attempt to create a file for writing.
+    let output_file_name = Box::new("output.txt");
+    let mut write_file = File::create(output_file_name.to_string())?;
+// Define a buffer to hold data.
+    let mut buffer = Vec::new();
+// Read data from the input file.
+    read_file.read_to_end(&mut buffer)?;
+// Write data to the output file.
+    write_file.write_all(&buffer)?;
+
+    let metadata = metadata(new_file_name.to_string())?;
+    println!("File size: {} bytes", metadata.len());
+    if let Ok(modified_time) = metadata.modified() {
+        let modified_time = modified_time
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap_or_default();
+        let modified_datetime =
+            DateTime::from_timestamp(modified_time.as_secs() as i64, 0).unwrap();
+        println!("Last modified: {}", modified_datetime);
+    } else {
+        eprintln!("Unable to retrieve modified time");
+    }
+    let permissions = metadata.permissions().mode();
+    println!("Permissions: {:o}", permissions & 0o777);
+
+    fs::remove_file(new_file_name.to_string())?;
+    fs::remove_file(output_file_name.to_string())?;
+
+    let base_path = PathBuf::from("/usr/local");
+    let new_path = base_path.join("bin");
+    println!("New path: {:?}", new_path);
+
+    let path = Path::new("/usr/local/bin");
+    if let Some(parent) = path.parent() {
+        println!("Parent directory: {:?}", parent);
+    }
+    Ok(())
+}
+
+use std::io::{Read};
+use std::path::Path;
+use std::path::PathBuf;
+use chrono::NaiveDateTime;
+use std::fs::metadata;
+use std::os::unix::fs::PermissionsExt;
+use std::time::SystemTime;
+use chrono::{DateTime, Local};
 use std::sync::{Mutex};
 use std::time::Duration;
+use std::fs::File;
+use std::fs;
+use std::io::Write;
+
 struct Bank {
     accounts: Mutex<HashMap<String, f64>>,
 }
+
 impl Bank {
     fn new() -> Self {
         Bank {
@@ -951,11 +1097,11 @@ fn do_in_atomic() {
         atomic_flag_clone.store(true, Ordering::Relaxed);
     });
     while !atomic_flag.load(Ordering::Relaxed) { // ④
-
     }
     thread_handle.join().unwrap();
     println!("Atomic flag is set to true.");
 }
+
 fn do_in_mutex() {
     let bank = Arc::new(Bank::new());
     let mut handles = vec![];
@@ -975,6 +1121,7 @@ fn do_in_mutex() {
         handle.join().unwrap();
     }
 }
+
 fn do_in_RefCell() {
     let data = RefCell::new(vec![1, 2, 3]);
     let data_ref = data.borrow(); // ①
@@ -984,6 +1131,7 @@ fn do_in_RefCell() {
     data_ref_mut.push(4); // ⑤
     println!("Modified Data: {:?}", *data_ref_mut); //
 }
+
 fn do_in_Arc() {
     let data = Arc::new(vec![1, 2, 3, 4, 5]); // ①
     let clone1 = Arc::clone(&data); // ②
@@ -999,6 +1147,7 @@ fn do_in_Arc() {
     handle1.join().unwrap();
     handle2.join().unwrap();
 }
+
 fn do_in_Rc() {
     let data = Rc::new(vec![1, 2, 3, 4, 5]); // ①
     let clone1 = Rc::clone(&data); // ②
@@ -1007,7 +1156,6 @@ fn do_in_Rc() {
     println!("Data: {:?}", data);
     println!("Clone1: {:?}", clone1);
     println!("Clone2: {:?}", clone2);
-
 }
 
 fn do_in_box() {
@@ -1043,7 +1191,7 @@ fn do_in_box() {
     let point: Point = origin();
     let rectangle: Rectangle = Rectangle {
         top_left: origin(),
-        bottom_right: Point { x: 3.0, y: -4.0 }
+        bottom_right: Point { x: 3.0, y: -4.0 },
     };
 
     // Heap allocated rectangle
@@ -1080,8 +1228,10 @@ fn do_in_box() {
 fn get_length(s: &String) -> usize {
     s.len()
 }
+
 use std::collections::HashSet;
 use std::mem;
+
 fn entry_point() {
     exec_variable();
     do_print();
@@ -1140,15 +1290,15 @@ macro_rules! find_min {
 }
 
 #[cfg(panic = "unwind")]
-fn ah(){ println!("Spit it out!!!!");}
+fn ah() { println!("Spit it out!!!!"); }
 
-#[cfg(not(panic="unwind"))]
-fn ah(){ println!("This is not your party. Run!!!!");}
+#[cfg(not(panic = "unwind"))]
+fn ah() { println!("This is not your party. Run!!!!"); }
 
-fn drink(beverage: &str){
-    if beverage == "lemonade"{ ah();}
-    else{println!("Some refreshing {} is all I need.", beverage);}
+fn drink(beverage: &str) {
+    if beverage == "lemonade" { ah(); } else { println!("Some refreshing {} is all I need.", beverage); }
 }
+
 use std::num::ParseIntError;
 
 // As with `Option`, we can use combinators such as `map()`.
@@ -1162,10 +1312,11 @@ fn multiply(first_number_str: &str, second_number_str: &str) -> Result<i32, Pars
 
 fn print(result: Result<i32, ParseIntError>) {
     match result {
-        Ok(n)  => println!("n is {}", n),
+        Ok(n) => println!("n is {}", n),
         Err(e) => println!("Error: {}", e),
     }
 }
+
 fn define_macro() {
     say_hello!();
     foo();
@@ -1188,7 +1339,6 @@ fn define_macro() {
     // rustc  lemonade.rs -C panic=abort
 
 
-
     // This still presents a reasonable answer.
     let twenty = multiply("10", "2");
     print(twenty);
@@ -1209,20 +1359,37 @@ fn define_macro() {
 }
 
 
-
 use std::io::{Error, ErrorKind};
 use std::rc::Rc;
 use std::sync::Arc;
 use uuid::Uuid;
 use warp::Filter;
 
+use hyper::service::{make_service_fn, service_fn}; // ①
+use hyper::{Body, Request, Response, Server};
+// ②
+async fn handle_request(_: Request<Body>) -> Result<Response<Body>, hyper::Error> {
+// Process the request and generate a response
+    let response = Response::new(Body::from("Hello, Rust Web
+                                            Server!"));
+    Ok(response)
+}
 #[tokio::main]
 async fn main() {
     entry_point();
 
-    let hello = warp::get().map(|| format!("Rust programming, fantastic!"));
-    warp::serve(hello).run(([0, 0, 0, 0], 3030)).await;
+    // let hello = warp::get().map(|| format!("Rust programming, fantastic!"));
+    // warp::serve(hello).run(([0, 0, 0, 0], 3030)).await;
     // end app
+    let addr = ([127, 0, 0, 1], 8080).into(); // ④
+    let make_service = make_service_fn(|_conn| { // ⑤
+        async { Ok::<_, hyper::Error>(service_fn(handle_request)) }
+    });
+    let server = Server::bind(&addr).serve(make_service); // ⑥
+    println!("Rust Web Server running on http://{}", addr); // ⑦
+    if let Err(e) = server.await { // ⑧
+        eprintln!("server error: {}", e);
+    }
 }
 
 
