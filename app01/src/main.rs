@@ -786,7 +786,14 @@ fn do_print() {
     do_closure();
 }
 
+fn exec_variable() {
+    let mut ticket = 0;   // 初始化定义
+    println!("init ticket count: {}", ticket); // 打印操作
+    ticket += 1;  // 逻辑增加1
+    println!("update ticket count: {}", ticket); // 打印操作
+}
 fn entry_point() {
+    exec_variable();
     do_print();
     for _ in 0..10 {
         println!("uuid: {}", Uuid::new_v4().hyphenated().to_string().replace("-", ""));
@@ -924,3 +931,4 @@ async fn main() {
     let hello = warp::get().map(|| format!("Hello, World!"));
     warp::serve(hello).run(([0, 0, 0, 0], 3030)).await;
 }
+
