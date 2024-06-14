@@ -2,6 +2,7 @@
 # Structure
 - app: basic rust programming skills
 
+
 byte source:
 ``` 
 [source.crates-io]
